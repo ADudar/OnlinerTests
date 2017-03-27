@@ -24,12 +24,11 @@ namespace OnlinerTests
             var fileName = this.GetType().ToString() + ".html";
             var htmlReporter = new ExtentHtmlReporter(dir + fileName);
             _extent.AttachReporter(htmlReporter);
-            var minMaxPriceTest = _extent.CreateTest("min-max price test");
+            var log = _extent.CreateTest("min-max price test");
 
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.NavigateToNotebooksPage();
             log.Info("navigate to notebooks page success");
-            minMaxPriceTest.Info("navigate to notebooks page success");
 
             try
             {
@@ -41,25 +40,17 @@ namespace OnlinerTests
             {
                 string msg = "error to set min or max price filter";
                 log.Error(msg);
+                log.Fail(msg);
                 Assert.Fail(msg);
-                minMaxPriceTest.Fail(msg);
             }
 
             log.Debug("filter min price set to " + minPrice);
             log.Debug("filter max price set to " + maxPrice);
-            minMaxPriceTest.Debug("filter min price set to " + minPrice);
-            minMaxPriceTest.Debug("filter max price set to " + maxPrice);
 
             string stringMinPrice = catalogPage.ConvertToStringPriceWithFormat(minPrice);
             string stringMaxPrice = catalogPage.ConvertToStringPriceWithFormat(maxPrice);
-
             string expectedStringPrice = stringMinPrice + " — " + stringMaxPrice;
             string priceFromWebdriver = _webDriver.GetText(catalogPage.FilterPriceLocator);
-
-            //int res = priceFromWebdriver.CompareTo(expectedStringPrice);
-            //Assert.IsTrue(res == 0);
-
-            log.Debug("filter max price set success");
 
             double[] prices = catalogPage.GetPrices();
             foreach (var item in prices)
@@ -68,14 +59,14 @@ namespace OnlinerTests
                 {
                     string msg = "founded items with less or great price";
                     log.Error(msg);
+                    log.Fail(msg);
                     Assert.Fail(msg);
-                    minMaxPriceTest.Fail(msg);
                     break;
                 }
             }
 
             string message = "all items greater than " + stringMinPrice + " and less than " + stringMaxPrice;
-            minMaxPriceTest.Pass(message);
+            log.Pass(message);
             Assert.Pass(message);
         }
     }

@@ -25,12 +25,11 @@ namespace OnlinerTests
             var htmlReporter = new ExtentHtmlReporter(dir + fileName);
             _extent.AttachReporter(htmlReporter);
 
-            var maxPriceTest = _extent.CreateTest("max price test");
+            var log = _extent.CreateTest("max price test");
 
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.NavigateToNotebooksPage();
             log.Info("navigate to notebooks page success");
-            maxPriceTest.Info("navigate to notebooks page success");
             try
             {
                 catalogPage.SetMaxPriceNotebooks(price);
@@ -38,30 +37,25 @@ namespace OnlinerTests
             catch
             {
                 string msg = "error to set max price filter";
-                log.Error(msg);
+                log.Fail(msg);
                 Assert.Fail(msg);
-                maxPriceTest.Fail(msg);
             }
 
-            maxPriceTest.Debug("filter max price set to " + price);
             log.Debug("filter max price set to " + price);
             string expectedStringPrice = catalogPage.ConvertToStringPriceWithFormat(price);
 
             try
             {
                 Assert.AreEqual("до " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter not set");
-                maxPriceTest.Pass("filter max price set success");
+                log.Pass("filter max price set success");
 
             }
             catch
             {
                 string msg = "error to set max price filter";
-                log.Error("filter max price not set");
+                log.Fail(msg);
                 Assert.Fail(msg);
-                maxPriceTest.Fail(msg);
             }
-
-            log.Debug("filter max price set success");
 
             double[] prices = catalogPage.GetPrices();
             foreach (var item in prices)
@@ -69,14 +63,13 @@ namespace OnlinerTests
                 if (item > price)
                 {
                     string msg = "founded items with greater price";
-                    log.Error(msg);
+                    log.Fail(msg);
                     Assert.Fail(msg);
-                    maxPriceTest.Fail(msg);
                     break;
                 }
             }
             string message = "all items have less than max price";
-            maxPriceTest.Pass(message);
+            log.Pass(message);
             Assert.Pass(message);
         }
     }

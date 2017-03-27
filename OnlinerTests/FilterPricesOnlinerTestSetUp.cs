@@ -10,8 +10,6 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium;
 using System;
 
-[assembly: XmlConfigurator(Watch = true)]
-
 namespace OnlinerTests
 {
     public class FilterPricesOnlinerTestSetUp
