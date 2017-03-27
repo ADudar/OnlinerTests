@@ -16,7 +16,6 @@ namespace OnlinerTests
     {
         protected readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         protected WebDriver _webDriver;
-
         protected ExtentReports _extent;
 
         [OneTimeSetUp]

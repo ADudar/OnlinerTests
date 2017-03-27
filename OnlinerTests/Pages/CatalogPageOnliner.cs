@@ -32,6 +32,8 @@ namespace OnlinerTests.Pages
 
         public By LoadingProductLocator { get; set; } = By.CssSelector(".schema-products");
 
+        public By OrderProductLocator { get; set; } = By.CssSelector(".schema-order");
+
         public void NavigateToNotebooksPage()
         {
             _driver.Click(NotebooksLinkLocator);

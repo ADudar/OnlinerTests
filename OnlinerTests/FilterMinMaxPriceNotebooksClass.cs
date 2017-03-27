@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OnlinerTests.Pages;
-using log4net.Config;
-using log4net;
-using System.Reflection;
 using AventStack.ExtentReports.Reporter;
 
 namespace OnlinerTests
@@ -35,7 +26,6 @@ namespace OnlinerTests
                 catalogPage.SetMinPriceNotebooks(minPrice);
                 catalogPage.SetMaxPriceNotebooks(maxPrice);
             }
-
             catch
             {
                 string msg = "error to set min or max price filter";
