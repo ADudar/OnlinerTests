@@ -9,36 +9,47 @@ using OnlinerTests.Pages;
 using log4net.Config;
 using log4net;
 using System.Reflection;
+using AventStack.ExtentReports.Reporter;
 
 namespace OnlinerTests
 {
     [TestFixture]
     [Parallelizable]
-
     public class FilterMinMaxPriceNotebooksClass : FilterPricesOnlinerTestSetUp
     {
-
-
         [TestCase(100, 300)]
         public void FilterMinMaxPriceNotebooksTest(double minPrice, double maxPrice)
         {
+            var dir = TestContext.CurrentContext.TestDirectory + "\\";
+            var fileName = this.GetType().ToString() + ".html";
+            var htmlReporter = new ExtentHtmlReporter(dir + fileName);
+            _extent.AttachReporter(htmlReporter);
+            var minMaxPriceTest = _extent.CreateTest("min-max price test");
+
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.NavigateToNotebooksPage();
             log.Info("navigate to notebooks page success");
+            minMaxPriceTest.Info("navigate to notebooks page success");
+
             try
             {
                 catalogPage.SetMinPriceNotebooks(minPrice);
                 catalogPage.SetMaxPriceNotebooks(maxPrice);
             }
+
             catch
             {
-                string message = "error to set min or max price filter";
-                log.Error(message);
-                Assert.Fail(message);
+                string msg = "error to set min or max price filter";
+                log.Error(msg);
+                Assert.Fail(msg);
+                minMaxPriceTest.Fail(msg);
             }
 
-            log.Debug("filter max price set to " + minPrice);
+            log.Debug("filter min price set to " + minPrice);
             log.Debug("filter max price set to " + maxPrice);
+            minMaxPriceTest.Debug("filter min price set to " + minPrice);
+            minMaxPriceTest.Debug("filter max price set to " + maxPrice);
+
             string stringMinPrice = catalogPage.ConvertToStringPriceWithFormat(minPrice);
             string stringMaxPrice = catalogPage.ConvertToStringPriceWithFormat(maxPrice);
 
@@ -53,18 +64,19 @@ namespace OnlinerTests
             double[] prices = catalogPage.GetPrices();
             foreach (var item in prices)
             {
-                try
+                if (item < minPrice || item > maxPrice)
                 {
-                    Assert.LessOrEqual(item, maxPrice);
-                    Assert.GreaterOrEqual(item, minPrice);
-                }
-                catch
-                {
-                    string message = "founded items with greater or less price";
-                    log.Error(message);
-                    Assert.Fail(message);
+                    string msg = "founded items with less or great price";
+                    log.Error(msg);
+                    Assert.Fail(msg);
+                    minMaxPriceTest.Fail(msg);
+                    break;
                 }
             }
+
+            string message = "all items greater than " + stringMinPrice + " and less than " + stringMaxPrice;
+            minMaxPriceTest.Pass(message);
+            Assert.Pass(message);
         }
     }
 }
