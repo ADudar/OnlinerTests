@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 
-
 namespace OnlinerTests.Pages
 {
     public class LoginPageOnliner

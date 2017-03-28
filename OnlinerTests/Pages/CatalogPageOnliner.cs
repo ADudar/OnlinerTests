@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using OpenQA.Selenium;
 using System.Globalization;
 
@@ -32,7 +28,17 @@ namespace OnlinerTests.Pages
 
         public By LoadingProductLocator { get; set; } = By.CssSelector(".schema-products");
 
-        public By OrderProductLocator { get; set; } = By.CssSelector(".schema-order");
+        public By OrderProductLocator { get; set; } = By.CssSelector(".schema-order__link");
+
+        public By PopularItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(1)");
+
+        public By CheapItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(2)");
+
+        public By ExpensiveItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(3)");
+
+        public By NewItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(4)");
+
+        public By RaitingItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(5)");
 
         public void NavigateToNotebooksPage()
         {
@@ -41,37 +47,38 @@ namespace OnlinerTests.Pages
 
         public void SetMinPriceNotebooks(double minPrice)
         {
-            _driver.WaitElement(InputPriceFromLocator);
             _driver.SendKeys(InputPriceFromLocator, minPrice.ToString());
-            _driver.WaitElement(NotebookItemDivLocator);
         }
 
         public void SetMaxPriceNotebooks(double maxPrice)
         {
-            _driver.WaitElement(InputPriceToLocator);
             _driver.SendKeys(InputPriceToLocator, maxPrice.ToString());
-            _driver.WaitElement(NotebookItemDivLocator);
+        }
+
+        public void SelectOrder(By locator)
+        {
+            _driver.Click(OrderProductLocator);
+            _driver.Click(locator);
+            _driver.FindAllElementsWithWaiting(PricesNotebooksLocator);
+            //_driver._wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(PricesNotebooksLocator));
         }
 
         public double[] GetPrices()
         {
             _driver.WaitWhileElementClassContainsText(LoadingProductLocator, "schema-products_processing");
             IList<IWebElement> pricesList = _driver.FindAllElementsWithWaiting(PricesNotebooksLocator);
+
             double[] pricesArray = new double[pricesList.Count];
             int i = 0;
 
             foreach (var item in pricesList)
             {
-                int startTrim = 0;
-                int endTrimPosition = item.GetAttribute("innerHTML").IndexOf('&');
-                pricesArray[i++] = Convert.ToDouble(
-                    item.GetAttribute("innerHTML")
-                    .Substring(startTrim, endTrimPosition)
-                    .Replace(',', '.')
-                    );
+                string processedItem = item.GetAttribute("innerHTML").Replace("&nbsp;", "").Replace("р.","").Replace(',', '.');
+                pricesArray[i++] = Convert.ToDouble(processedItem);
             }
             return pricesArray;
         }
+
         public string ConvertToStringPriceWithFormat(double price)
         {
             NumberFormatInfo nfi = (NumberFormatInfo)

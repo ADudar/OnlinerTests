@@ -64,10 +64,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FilterMinPriceNotebooksClass.cs" />
-    <Compile Include="FilterMaxPriceNotebooksClass.cs" />
-    <Compile Include="FilterMinMaxPriceNotebooksClass.cs" />
-    <Compile Include="FilterPricesOnlinerTestSetUp.cs" />
+    <Compile Include="FilterPricesOnlinerTests.cs" />
+    <Compile Include="OnlinerTestsSetup.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="OrderOnlinerTests.cs" />
     <Compile Include="Pages\CatalogPageOnliner.cs" />
     <Compile Include="Pages\LoginPageOnliner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

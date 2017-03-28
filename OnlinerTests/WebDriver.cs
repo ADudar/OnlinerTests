@@ -14,51 +14,60 @@ namespace OnlinerTests
 
     public class WebDriver
     {
-        public IWebDriver Driver { get; set; }
-        private IWait<IWebDriver> _wait;
+        public IWebDriver Driver { get; }
+        public IWait<IWebDriver> _wait;
+        public DesiredCapabilities capabilities;
+        Logger _logger;
 
-        public DesiredCapabilities capability;
-
-        public WebDriver(string browser)
+        public WebDriver(string browser, Logger logger)
         {
-
+            _logger = logger;
             if (ConfigurationManager.AppSettings["GridEnabled"] == "true")
             {
-                capability = new DesiredCapabilities();
+                _logger.Info("Webdriver run from grid");
+                capabilities = new DesiredCapabilities();
                 switch (browser)
                 {
                     case "Chrome":
-                        capability = DesiredCapabilities.Chrome();
+                        _logger.Info("Webdriver run with Chrome");
+                        capabilities = DesiredCapabilities.Chrome();
                         break;
                     case "IE":
                     case "Internet Explorer":
-                        capability = DesiredCapabilities.InternetExplorer();
+                        _logger.Info("Webdriver run with IE");
+                        capabilities = DesiredCapabilities.InternetExplorer();
                         break;
                     case "Firefox":
-                        capability = DesiredCapabilities.Firefox();
+                        _logger.Info("Webdriver run with Firefox");
+                        capabilities = DesiredCapabilities.Firefox();
                         break;
                     default:
-                        capability = DesiredCapabilities.Chrome();
+                        _logger.Info("Webdriver run with default browser Chrome");
+                        capabilities = DesiredCapabilities.Chrome();
                         break;
                 }
-                capability.SetCapability(CapabilityType.Platform, new Platform(PlatformType.Windows));
-                Driver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), capability, TimeSpan.FromSeconds(600));
+                capabilities.SetCapability(CapabilityType.Platform, new Platform(PlatformType.Windows));
+                Driver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), capabilities, TimeSpan.FromSeconds(600));
             }
             else
             {
                 switch (browser)
                 {
                     case "Chrome":
+                        _logger.Info("Webdriver run with Chrome");
                         Driver = new ChromeDriver();
                         break;
                     case "IE":
                     case "Internet Explorer":
+                        _logger.Info("Webdriver run with IE");
                         Driver = new InternetExplorerDriver();
                         break;
                     case "Firefox":
+                        _logger.Info("Webdriver run with Firefox");
                         Driver = new FirefoxDriver();
                         break;
                     default:
+                        _logger.Info("Webdriver run with default browser Chrome");
                         Driver = new ChromeDriver();
                         break;
                 }
@@ -69,45 +78,60 @@ namespace OnlinerTests
 
         public void Quit()
         {
-                Driver.Quit();
+            _logger.Info("quit success");
+            //_logger.Flush();
+            Driver.Quit();
         }
 
         public void Navigate(string url)
         {
+            _logger.Info("Navigate to " + url);
             Driver.Navigate().GoToUrl(url);
         }
 
         public void SendKeys(By locator, string text)
         {
             var element = WaitElement(locator);
+            _logger.Info("send keys to element: " + element.TagName + " value: " + text);
             element.SendKeys(text);
         }
 
         public void Click(By locator)
         {
             var element = WaitElement(locator);
+            _logger.Info("click to element: " + element.TagName);
             element.Click();
         }
 
         public string GetText(By locator)
         {
-            return WaitElement(locator).Text;
+            string findedText = WaitElement(locator).Text;
+            _logger.Info("finded text: " + findedText);
+            return findedText;
         }
 
         public IWebElement WaitElement(By locator)
         {
+            _logger.Info("wait element from locator: " + locator);
             var element = _wait.Until(ExpectedConditions.ElementIsVisible(locator));
+            _logger.Info("finded element: " + element.TagName + " ,is enabled: " + element.Enabled);
             return element;
         }
 
         public IList<IWebElement> FindAllElementsWithWaiting(By locator)
         {
-            return _wait.Until(d => d.FindElements(locator));
+            _logger.Info("wait all elements from locator " + locator);
+            var collection = _wait.Until(d => d.FindElements(locator));
+            _logger.Info("count finded elements: " + collection.Count);
+            return collection;
         }
 
-        public void WaitWhileElementClassContainsText(By by, string text)
+        public void WaitWhileElementClassContainsText(By locator, string text)
         {
-            _wait.Until(d => !d.FindElement(by).GetAttribute("class").Contains(text));
+            _logger.Info("wait element from locator: " + locator);
+            bool result = _wait.Until(d => !d.FindElement(locator).GetAttribute("class").Contains(text));
+            _logger.Info("result of waitingn element" + (result));
+
         }
     }
 }
