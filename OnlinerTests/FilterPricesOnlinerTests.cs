@@ -13,6 +13,7 @@ namespace OnlinerTests
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.NavigateToNotebooksPage();
             log.Info("navigate to notebooks page success");
+
             try
             {
                 catalogPage.SetMinPriceNotebooks(price);

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using OnlinerTests.Pages;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -15,7 +16,7 @@ namespace OnlinerTests
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.NavigateToNotebooksPage();
             log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.CheapItemsLocator);
+            catalogPage.SelectOrder(catalogPage.CheapSelectLocator);
             log.Info("cheap items selected");
 
             int count = 0;
@@ -26,7 +27,7 @@ namespace OnlinerTests
                 {
                     prices = catalogPage.GetPrices();
                 }
-                catch (StaleElementReferenceException e)
+                catch (StaleElementReferenceException)
                 {
                     count++;
                 }
@@ -56,7 +57,7 @@ namespace OnlinerTests
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.NavigateToNotebooksPage();
             log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.ExpensiveItemsLocator);
+            catalogPage.SelectOrder(catalogPage.ExpensiveSelectLocator);
             log.Info("expensive items selected");
             //_webDriver._wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(catalogPage.ExpensiveItemsLocator));
 
@@ -68,7 +69,7 @@ namespace OnlinerTests
                 {
                     prices = catalogPage.GetPrices();
                 }
-                catch (StaleElementReferenceException e)
+                catch (StaleElementReferenceException)
                 {
                     count++;
                 }
@@ -88,6 +89,47 @@ namespace OnlinerTests
                 }
             }
             string message = "filter expensive is apply";
+            log.Pass(message);
+            Assert.Pass(message);
+        }
+
+        [Test]
+        public void OrderRatingTest()
+        {
+            var catalogPage = new CatalogPageOnliner(_webDriver);
+            catalogPage.NavigateToNotebooksPage();
+            log.Info("navigate to notebooks page success");
+            catalogPage.SelectOrder(catalogPage.RaitingSelectLocator);
+            log.Info("rating items selected");
+
+            int count = 0;
+            int[] ratings = new int[0];
+            ratings = catalogPage.GetRatings();
+            while (count < 4)
+            {
+                try
+                {
+                }
+                catch (StaleElementReferenceException)
+                {
+                    count++;
+                }
+                break;
+            }
+
+            //double[] prices = catalogPage.GetPrices();
+            for (int i = 0; i < ratings.Length - 1; i++)
+            {
+                if (ratings[i] < ratings[i + 1])
+                {
+                    string msg = "Rating filter is not applied";
+                    log.Error(msg);
+                    log.Fail(msg);
+                    Assert.Fail(msg);
+                    break;
+                }
+            }
+            string message = "filter rating is apply";
             log.Pass(message);
             Assert.Pass(message);
         }

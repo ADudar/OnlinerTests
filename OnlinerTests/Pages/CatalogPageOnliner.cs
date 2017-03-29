@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using OpenQA.Selenium;
 using System.Globalization;
+using System.Threading;
+using OpenQA.Selenium.Support.UI;
 
 namespace OnlinerTests.Pages
 {
@@ -20,7 +22,7 @@ namespace OnlinerTests.Pages
 
         public By InputPriceToLocator { get; set; } = By.XPath("//input[contains(@class, 'schema-filter__number-input_price') and contains(@data-bind, 'value: facet.value.to')]");
 
-        public By NotebookItemDivLocator { get; set; } = By.CssSelector(".schema-product__group");
+        public By ItemsLocator { get; set; } = By.CssSelector(".schema-products");
 
         public By PricesNotebooksLocator { get; set; } = By.XPath("//a[contains(@class, 'schema-product__price-value_primary')]/span[contains(@data-bind,'minPrice')]");
 
@@ -30,15 +32,20 @@ namespace OnlinerTests.Pages
 
         public By OrderProductLocator { get; set; } = By.CssSelector(".schema-order__link");
 
-        public By PopularItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(1)");
+        public By PopularSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(1)");
 
-        public By CheapItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(2)");
+        public By CheapSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(2)");
 
-        public By ExpensiveItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(3)");
+        public By ExpensiveSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(3)");
 
-        public By NewItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(4)");
+        public By NewSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(4)");
 
-        public By RaitingItemsLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(5)");
+        public By RaitingSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(5)");
+
+        public By RaitingItemsLocator { get; set; } = By.CssSelector(".rating");
+
+        public By SchemaFilterButtonLocator { get; set; } = By.CssSelector(".schema-filter-button__state_initial");
+
 
         public void NavigateToNotebooksPage()
         {
@@ -59,7 +66,7 @@ namespace OnlinerTests.Pages
         {
             _driver.Click(OrderProductLocator);
             _driver.Click(locator);
-            _driver.FindAllElementsWithWaiting(PricesNotebooksLocator);
+            //_driver.FindAllElementsWithWaiting(PricesNotebooksLocator);
             //_driver._wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(PricesNotebooksLocator));
         }
 
@@ -86,6 +93,24 @@ namespace OnlinerTests.Pages
             nfi.NumberGroupSeparator = " ";
             nfi.NumberDecimalDigits = 0;
             return price.ToString("n", nfi);
+        }
+
+        internal int[] GetRatings()
+        {
+            _driver.WaitElement(By.CssSelector(".schema-products_processing"));
+            _driver.WaitElement(By.CssSelector(".schema-filter-button__state_animated"));
+            _driver.WaitWhileElementClassContainsText(LoadingProductLocator, "schema-products_processing");
+            _driver.WaitWhileElementClassContainsText(SchemaFilterButtonLocator, "schema-filter-button__state_animated");
+            IList<IWebElement> ratingList = _driver.FindAllElementsWithRaiting(RaitingItemsLocator);
+            int[] ratings = new int[ratingList.Count];
+            int i = 0;
+            foreach (var item in ratingList)
+            {
+                string classname = item.GetAttribute("class");
+                int pos = classname.IndexOf('_');
+                ratings[i++] = Convert.ToInt32(classname.Substring(pos+1, classname.Length - (pos +1)));
+            }
+                return ratings;
         }
     }
 }

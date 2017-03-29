@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using System.Configuration;
 using OnlinerTests.Pages;
+using AventStack.ExtentReports.Reporter;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace OnlinerTests
 {
@@ -8,20 +10,23 @@ namespace OnlinerTests
     {
         protected WebDriver _webDriver;
         protected Logger log;
+        object myLock = new object();
 
         [OneTimeSetUp]
         protected void OneTimeSetup()
         {
-            log = new Logger();
-
+            lock (myLock)
+            {
+                log = new Logger();
+            }
         }
 
         [SetUp]
         public void Setup()
         {
+
             log.CreateTest(TestContext.CurrentContext.Test.MethodName);
-            string browser = ConfigurationManager.AppSettings["Browser"];
-            _webDriver = new WebDriver(browser, log);
+            _webDriver = new WebDriver(log);
             var loginPage = new LoginPageOnliner(_webDriver);
             loginPage.Open();
             User user1 = User.Create(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
@@ -38,6 +43,8 @@ namespace OnlinerTests
         protected void OneTimeTearDown()
         {
             log.Flush();
+
+
             //todo: one report when run parallel
         }
     }

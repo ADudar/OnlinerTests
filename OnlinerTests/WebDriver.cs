@@ -7,6 +7,7 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System.Configuration;
+using System.Threading;
 
 namespace OnlinerTests
 {
@@ -19,8 +20,9 @@ namespace OnlinerTests
         public DesiredCapabilities capabilities;
         Logger _logger;
 
-        public WebDriver(string browser, Logger logger)
+        public WebDriver(Logger logger)
         {
+            string browser = ConfigurationManager.AppSettings["Browser"];
             _logger = logger;
             if (ConfigurationManager.AppSettings["GridEnabled"] == "true")
             {
@@ -79,7 +81,6 @@ namespace OnlinerTests
         public void Quit()
         {
             _logger.Info("quit success");
-            //_logger.Flush();
             Driver.Quit();
         }
 
@@ -121,6 +122,18 @@ namespace OnlinerTests
         public IList<IWebElement> FindAllElementsWithWaiting(By locator)
         {
             _logger.Info("wait all elements from locator " + locator);
+            var collection = _wait.Until(d => d.FindElements(locator));
+            _logger.Info("count finded elements: " + collection.Count);
+            return collection;
+        }
+
+        public IList<IWebElement> FindAllElementsWithRaiting(By locator)
+        {
+            _logger.Info("wait all elements from locator " + locator);
+            //_wait.Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+            //_wait.Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return jQuery.active == 0"));
+            //_wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(locator));
+            //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             var collection = _wait.Until(d => d.FindElements(locator));
             _logger.Info("count finded elements: " + collection.Count);
             return collection;

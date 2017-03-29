@@ -67,6 +67,7 @@
     <Compile Include="FilterPricesOnlinerTests.cs" />
     <Compile Include="OnlinerTestsSetup.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="OrderNewPopularTests.cs" />
     <Compile Include="OrderOnlinerTests.cs" />
     <Compile Include="Pages\CatalogPageOnliner.cs" />
     <Compile Include="Pages\LoginPageOnliner.cs" />
