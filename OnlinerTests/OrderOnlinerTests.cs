@@ -14,7 +14,7 @@ namespace OnlinerTests
         public void OrderCheapTest()
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.NavigateToNotebooksPage();
+            catalogPage.Open();
             log.Info("navigate to notebooks page success");
             catalogPage.SelectOrder(catalogPage.CheapSelectLocator);
             log.Info("cheap items selected");
@@ -34,7 +34,6 @@ namespace OnlinerTests
                 count = count + 4;
             }
 
-            //double[] prices = catalogPage.GetPrices();
             for (int i = 0; i < prices.Length - 1; i++)
             {
                 if (prices[i] > prices[i+1] )
@@ -55,11 +54,10 @@ namespace OnlinerTests
         public void OrderExpensiveTest()
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.NavigateToNotebooksPage();
+            catalogPage.Open();
             log.Info("navigate to notebooks page success");
             catalogPage.SelectOrder(catalogPage.ExpensiveSelectLocator);
             log.Info("expensive items selected");
-            //_webDriver._wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(catalogPage.ExpensiveItemsLocator));
 
             int count = 0;
             double[] prices = new double[0];
@@ -76,7 +74,6 @@ namespace OnlinerTests
                 count = count + 4;
             }
 
-            //double[] prices = catalogPage.GetPrices();
             for (int i = 0; i < prices.Length - 1; i++)
             {
                 if (prices[i] < prices[i + 1])
@@ -97,7 +94,7 @@ namespace OnlinerTests
         public void OrderRatingTest()
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.NavigateToNotebooksPage();
+            catalogPage.Open();
             log.Info("navigate to notebooks page success");
             catalogPage.SelectOrder(catalogPage.RaitingSelectLocator);
             log.Info("rating items selected");
@@ -117,7 +114,6 @@ namespace OnlinerTests
                 break;
             }
 
-            //double[] prices = catalogPage.GetPrices();
             for (int i = 0; i < ratings.Length - 1; i++)
             {
                 if (ratings[i] < ratings[i + 1])

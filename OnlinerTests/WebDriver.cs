@@ -11,8 +11,6 @@ using System.Threading;
 
 namespace OnlinerTests
 {
-    public enum BrowserType { Chrome, IE, Firefox };
-
     public class WebDriver
     {
         public IWebDriver Driver { get; }
@@ -127,24 +125,18 @@ namespace OnlinerTests
             return collection;
         }
 
-        public IList<IWebElement> FindAllElementsWithRaiting(By locator)
-        {
-            _logger.Info("wait all elements from locator " + locator);
-            //_wait.Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-            //_wait.Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return jQuery.active == 0"));
-            //_wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(locator));
-            //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-            var collection = _wait.Until(d => d.FindElements(locator));
-            _logger.Info("count finded elements: " + collection.Count);
-            return collection;
-        }
-
         public void WaitWhileElementClassContainsText(By locator, string text)
         {
             _logger.Info("wait element from locator: " + locator);
             bool result = _wait.Until(d => !d.FindElement(locator).GetAttribute("class").Contains(text));
             _logger.Info("result of waitingn element" + (result));
+        }
 
+        public bool CheckContainsClass(By locator, string className)
+        {
+            bool result = Driver.FindElement(locator).GetAttribute("class").Contains(className);
+            _logger.Info("result of find element" + (result));
+            return result;
         }
     }
 }

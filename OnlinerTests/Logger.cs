@@ -5,49 +5,71 @@ using System;
 using System.Threading;
 using System.Management;
 using System.CodeDom.Compiler;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace OnlinerTests
 {
     public class Logger
     {
-        protected ExtentReports _extent;
-        protected ExtentTest _test;
+        //protected ExtentReports _extent = new ExtentReports();
+        protected static  ExtentTest _test;
+        private static ThreadLocal<ExtentTest> _thread;
+        private static readonly ExtentReports _instance = new ExtentReports();
+        private static ExtentReports _extent = Logger.Instance;
 
-        public Logger()
+        public static ExtentReports Instance
         {
-            
-            this._extent = new ExtentReports();
-            this._extent.AddSystemInfo("OS", "" + Environment.OSVersion.Platform.ToString() + " " + Environment.OSVersion.VersionString);
-            this._extent.AddSystemInfo("Selenium Version", "3.30");
-            this._extent.AddSystemInfo("Author", Environment.UserName);
-            var dir = TestContext.CurrentContext.TestDirectory + "\\";
-            var fileName = TestContext.CurrentContext.Test.ClassName + ".html";
-            this._extent.AttachReporter(new ExtentHtmlReporter(dir + fileName));
+            get
+            {
+                return _instance;
+            }
         }
 
-        public void CreateTest(string text)
+
+        public  Logger()
         {
-            this._test = this._extent.CreateTest(text);
+            string path = System.Reflection.Assembly.GetCallingAssembly().CodeBase;
+            string actualPath = path.Substring(0, path.LastIndexOf("bin"));
+            string projectPath = new Uri(actualPath).LocalPath;
+            Directory.CreateDirectory(projectPath + "Reports");
+
+            string reportPath = projectPath + "Reports\\Report" + TestContext.CurrentContext.Test.FullName + ".html";
+            Instance.AttachReporter(new ExtentHtmlReporter(reportPath));
+
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        public void  CreateTest(string text)
+        {
+            //_test = Instance.CreateTest(text);
+            if (_thread== null)
+                _thread = new ThreadLocal<ExtentTest>();
+
+            var t = Instance.CreateTest(text);
+            _thread.Value = t;
+
+            _test = t;
         }
 
         public void Info(string text)
         {
-            this._test.Info(text);
+            _test.Info(text);
         }
 
         public void Debug(string text)
         {
-            this._test.Debug(text);
+            _test.Debug(text);
         }
 
         public void Error(string text)
         {
-            this._test.Error(text);
+            _test.Error(text);
         }
 
         public void Fail(string text)
         {
-            this._test.Fail(text);
+            _test.Fail(text);
         }
 
         public void Pass(string text)
@@ -57,12 +79,15 @@ namespace OnlinerTests
 
         public void Log(Status s, string text)
         {
-            this._test.Log(s, text);
+            _test.Log(s, text);
         }
 
         public void Flush()
         {
-            this._extent.Flush();
+            lock (this)
+            {
+                Instance.Flush();
+            }
         }
     }
 }

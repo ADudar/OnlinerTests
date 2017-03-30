@@ -19,7 +19,7 @@ namespace OnlinerTests.Pages
 
         public By LoginButtonLocator { get; set; } = By.XPath("//button[contains(@class,'auth-box__auth-submit')]");
 
-        public By AccountTitleLocator { get; set; } = By.ClassName("m-title");
+        public By AccountTitleLocator { get; set; } = By.XPath("//a[contains(@data-bind,'nickname')]");
 
         public void Open()
         {

@@ -11,12 +11,12 @@ namespace OnlinerTests
         public void FilterMinPriceTest(double price)
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.NavigateToNotebooksPage();
+            catalogPage.Open();
             log.Info("navigate to notebooks page success");
 
             try
             {
-                catalogPage.SetMinPriceNotebooks(price);
+                catalogPage.SetPriceNotebooks(price, catalogPage.InputPriceFromLocator);
             }
             catch
             {
@@ -59,16 +59,16 @@ namespace OnlinerTests
             Assert.Pass(message);
         }
 
-        [TestCase(100, 300)]
+        [TestCase(300, 400)]
         public void FilterMinMaxPriceTest(double minPrice, double maxPrice)
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.NavigateToNotebooksPage();
+            catalogPage.Open();
             log.Info("navigate to notebooks page success");
             try
             {
-                catalogPage.SetMinPriceNotebooks(minPrice);
-                catalogPage.SetMaxPriceNotebooks(maxPrice);
+                catalogPage.SetPriceNotebooks(minPrice, catalogPage.InputPriceFromLocator);
+                catalogPage.SetPriceNotebooks(maxPrice, catalogPage.InputPriceToLocator);
             }
             catch
             {
@@ -104,15 +104,15 @@ namespace OnlinerTests
             Assert.Pass(message);
         }
 
-        [TestCase(350)]
+        [TestCase(400)]
         public void FilterMaxPriceTest(double price)
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.NavigateToNotebooksPage();
+            catalogPage.Open();
             log.Info("navigate to notebooks page success");
             try
             {
-                catalogPage.SetMaxPriceNotebooks(price);
+                catalogPage.SetPriceNotebooks(price, catalogPage.InputPriceToLocator);
             }
             catch
             {
