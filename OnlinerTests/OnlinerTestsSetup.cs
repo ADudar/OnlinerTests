@@ -1,11 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Configuration;
-using OnlinerTests.Pages;
-using AventStack.ExtentReports.Reporter;
-using Microsoft.CSharp.RuntimeBinder;
-using AventStack.ExtentReports;
-using System.Threading;
-using NUnit.Framework.Interfaces;
 
 namespace OnlinerTests
 {

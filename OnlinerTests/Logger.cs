@@ -3,10 +3,7 @@ using AventStack.ExtentReports.Reporter;
 using NUnit.Framework;
 using System;
 using System.Threading;
-using System.Management;
-using System.CodeDom.Compiler;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace OnlinerTests
 {

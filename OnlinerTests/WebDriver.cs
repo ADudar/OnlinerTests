@@ -7,7 +7,6 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System.Configuration;
-using System.Threading;
 
 namespace OnlinerTests
 {
@@ -74,8 +73,14 @@ namespace OnlinerTests
             }
             _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
             _wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementReferenceException));
-            //_wait.PollingInterval = TimeSpan.FromSeconds(1);
-            //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            _wait.PollingInterval = TimeSpan.FromSeconds(1);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+        }
+
+        internal void WaitPageLoaded()
+        {
+            _wait.Until(_driver => ((IJavaScriptExecutor)_driver).ExecuteScript("return document.readyState").Equals("complete"));
+
         }
 
         public void Quit()
@@ -129,11 +134,12 @@ namespace OnlinerTests
             return collection;
         }
 
-        public void WaitWhileElementClassContainsText(By locator, string text)
+        public bool WaitWhileElementClassContainsText(By locator, string text)
         {
             _logger.Info("wait element from locator: " + locator);
             bool result = _wait.Until(d => !d.FindElement(locator).GetAttribute("class").Contains(text));
             _logger.Info("result of waitingn element: " + (result));
+            return result;
         }
 
         public bool CheckContainsClass(By locator, string className)

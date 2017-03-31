@@ -10,12 +10,13 @@ namespace OnlinerTests
         [TestCase(10000)]
         public void FilterMinPriceTest(double price)
         {
-            var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.Open();
-            catalogPage.SetMinPrice(price);
-            string expectedStringPrice = catalogPage.ConvertToStringPriceWithFormat(price);
-            Assert.AreEqual("от " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter label not set");
-            double[] prices = catalogPage.GetPrices();
+            var filterPage = new FilterPricePageOnliner(_webDriver);
+            var notebooksPage = new NotebooksPageOnliner(_webDriver);
+            notebooksPage.Open();
+            filterPage.SetMinPrice(price);
+            string expectedStringPrice = filterPage.ConvertToStringPriceWithFormat(price);
+            Assert.AreEqual("от " + expectedStringPrice, _webDriver.GetText(filterPage.FilterPriceLabelLocator), "Error, filter label not set");
+            double[] prices = notebooksPage.GetPrices();
             foreach (var item in prices)
             {
                 if (item < price)
@@ -30,15 +31,16 @@ namespace OnlinerTests
         [TestCase(300, 400)]
         public void FilterMinMaxPriceTest(double minPrice, double maxPrice)
         {
-            var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.Open();
-            catalogPage.SetMinMaxPrice(minPrice, maxPrice);
-            string stringMinPrice = catalogPage.ConvertToStringPriceWithFormat(minPrice);
-            string stringMaxPrice = catalogPage.ConvertToStringPriceWithFormat(maxPrice);
+            var filterPage = new FilterPricePageOnliner(_webDriver);
+            var notebooksPage = new NotebooksPageOnliner(_webDriver);
+            notebooksPage.Open();
+            filterPage.SetMinMaxPrice(minPrice, maxPrice);
+            string stringMinPrice = filterPage.ConvertToStringPriceWithFormat(minPrice);
+            string stringMaxPrice = filterPage.ConvertToStringPriceWithFormat(maxPrice);
             string expectedStringPrice = stringMinPrice + " — " + stringMaxPrice;
-            Assert.AreEqual(expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter label not set");
-            string priceFromWebdriver = _webDriver.GetText(catalogPage.FilterPriceLocator);
-            double[] prices = catalogPage.GetPrices();
+            Assert.AreEqual(expectedStringPrice, _webDriver.GetText(filterPage.FilterPriceLabelLocator), "Error, filter label not set");
+            string priceFromWebdriver = _webDriver.GetText(filterPage.FilterPriceLabelLocator);
+            double[] prices = notebooksPage.GetPrices();
             foreach (var item in prices)
             {
                 if (item < minPrice || item > maxPrice)
@@ -53,12 +55,13 @@ namespace OnlinerTests
         [TestCase(400)]
         public void FilterMaxPriceTest(double price)
         {
-            var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.Open();
-            catalogPage.SetMaxPrice(price);
-            string expectedStringPrice = catalogPage.ConvertToStringPriceWithFormat(price);
-            Assert.AreEqual("до " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter not set");
-            double[] prices = catalogPage.GetPrices();
+            var filterPage = new FilterPricePageOnliner(_webDriver);
+            var notebooksPage = new NotebooksPageOnliner(_webDriver);
+            notebooksPage.Open();
+            filterPage.SetMaxPrice(price);
+            string expectedStringPrice = filterPage.ConvertToStringPriceWithFormat(price);
+            Assert.AreEqual("до " + expectedStringPrice, _webDriver.GetText(filterPage.FilterPriceLabelLocator), "Error, filter not set");
+            double[] prices = notebooksPage.GetPrices();
             foreach (var item in prices)
             {
                 if (item > price)

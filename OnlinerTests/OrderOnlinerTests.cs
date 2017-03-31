@@ -1,8 +1,5 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using OnlinerTests.Pages;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 namespace OnlinerTests
 {
@@ -13,10 +10,11 @@ namespace OnlinerTests
         [Test]
         public void OrderCheapTest()
         {
-            var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.Open();
-            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Cheap);
-            double[] prices = catalogPage.GetPrices();
+            var orderPage = new OrderPageOnliner(_webDriver);
+            var notebooksPage = new NotebooksPageOnliner(_webDriver);
+            notebooksPage.Open();
+            orderPage.SelectOrder(OrderPageOnliner.OrderType.Cheap);
+            double[] prices = notebooksPage.GetPrices();
             for (int i = 0; i < prices.Length - 1; i++)
             {
                 if (prices[i] > prices[i + 1])
@@ -30,10 +28,11 @@ namespace OnlinerTests
         [Test]
         public void OrderExpensiveTest()
         {
-            var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.Open();
-            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Expensive);
-            double[] prices = catalogPage.GetPrices();
+            var orderPage = new OrderPageOnliner(_webDriver);
+            var notebooksPage = new NotebooksPageOnliner(_webDriver);
+            notebooksPage.Open();
+            orderPage.SelectOrder(OrderPageOnliner.OrderType.Expensive);
+            double[] prices = notebooksPage.GetPrices();
             for (int i = 0; i < prices.Length - 1; i++)
             {
                 if (prices[i] < prices[i + 1])
@@ -47,10 +46,11 @@ namespace OnlinerTests
         [Test]
         public void OrderRatingTest()
         {
-            var catalogPage = new CatalogPageOnliner(_webDriver);
-            catalogPage.Open();
-            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Raiting);
-            int[] ratings = catalogPage.GetRatings();
+            var orderPage = new OrderPageOnliner(_webDriver);
+            var notebooksPage = new NotebooksPageOnliner(_webDriver);
+            notebooksPage.Open();
+            orderPage.SelectOrder(OrderPageOnliner.OrderType.Raiting);
+            int[] ratings = notebooksPage.GetRatings();
             for (int i = 0; i < ratings.Length - 1; i++)
             {
                 if (ratings[i] < ratings[i + 1])
