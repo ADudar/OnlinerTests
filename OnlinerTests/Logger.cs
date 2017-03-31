@@ -16,7 +16,6 @@ namespace OnlinerTests
         protected static  ExtentTest _test;
         private static ThreadLocal<ExtentTest> _thread;
         private static readonly ExtentReports _instance = new ExtentReports();
-        private static ExtentReports _extent = Logger.Instance;
 
         public static ExtentReports Instance
         {
@@ -26,8 +25,9 @@ namespace OnlinerTests
             }
         }
 
+        public Logger() { }
 
-        public  Logger()
+        static  Logger()
         {
             string path = System.Reflection.Assembly.GetCallingAssembly().CodeBase;
             string actualPath = path.Substring(0, path.LastIndexOf("bin"));
@@ -36,11 +36,15 @@ namespace OnlinerTests
 
             string reportPath = projectPath + "Reports\\Report" + TestContext.CurrentContext.Test.FullName + ".html";
             Instance.AttachReporter(new ExtentHtmlReporter(reportPath));
-
         }
 
-        //[MethodImpl(MethodImplOptions.Synchronized)]
-        public void  CreateTest(string text)
+        public static ExtentTest GetTest(string text)
+        {
+            //CreateTest(text);
+            return _thread.Value;
+        }
+
+        public static void CreateTest(string text)
         {
             //_test = Instance.CreateTest(text);
             if (_thread== null)
@@ -48,7 +52,7 @@ namespace OnlinerTests
 
             var t = Instance.CreateTest(text);
             _thread.Value = t;
-
+            //return t;
             _test = t;
         }
 
@@ -84,9 +88,21 @@ namespace OnlinerTests
 
         public void Flush()
         {
-            lock (this)
-            {
                 Instance.Flush();
+        }
+
+        public void TearDown()
+        {
+            var testStatus = TestContext.CurrentContext.Result.Outcome.Status;
+            var stackTrace = "<pre>" +  TestContext.CurrentContext.Result.StackTrace + "</pre>";
+            var testMessage = TestContext.CurrentContext.Result.Message;
+            if (testStatus == NUnit.Framework.Interfaces.TestStatus.Failed)
+            {
+                Fail(stackTrace + testMessage);
+            }
+            else if (testStatus == NUnit.Framework.Interfaces.TestStatus.Passed)
+            {
+                Pass(testMessage);
             }
         }
     }

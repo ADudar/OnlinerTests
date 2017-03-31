@@ -72,6 +72,7 @@
     <Compile Include="OrderNewPopularTests.cs" />
     <Compile Include="OrderOnlinerTests.cs" />
     <Compile Include="Pages\CatalogPageOnliner.cs" />
+    <Compile Include="Pages\FilterPageOnliner.cs" />
     <Compile Include="Pages\LoginPageOnliner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User.cs" />

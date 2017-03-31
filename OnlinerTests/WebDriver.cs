@@ -73,7 +73,9 @@ namespace OnlinerTests
                 }
             }
             _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
-            _wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
+            _wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementReferenceException));
+            //_wait.PollingInterval = TimeSpan.FromSeconds(1);
+            //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
         }
 
         public void Quit()
@@ -113,13 +115,15 @@ namespace OnlinerTests
         {
             _logger.Info("wait element from locator: " + locator);
             var element = _wait.Until(ExpectedConditions.ElementIsVisible(locator));
-            _logger.Info("finded element: " + element.TagName + " ,is enabled: " + element.Enabled);
+            _logger.Info("finded element: " + element.TagName + ", is enabled: " + element.Enabled);
             return element;
         }
 
         public IList<IWebElement> FindAllElementsWithWaiting(By locator)
         {
+            //Driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(3));
             _logger.Info("wait all elements from locator " + locator);
+           _wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(locator));
             var collection = _wait.Until(d => d.FindElements(locator));
             _logger.Info("count finded elements: " + collection.Count);
             return collection;
@@ -129,7 +133,7 @@ namespace OnlinerTests
         {
             _logger.Info("wait element from locator: " + locator);
             bool result = _wait.Until(d => !d.FindElement(locator).GetAttribute("class").Contains(text));
-            _logger.Info("result of waitingn element" + (result));
+            _logger.Info("result of waitingn element: " + (result));
         }
 
         public bool CheckContainsClass(By locator, string className)

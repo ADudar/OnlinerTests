@@ -56,24 +56,78 @@ namespace OnlinerTests.Pages
             _driver.Click(NotebooksLinkLocator);
         }
 
-        public void SetPriceNotebooks(double price, By locator)
+        public void SelectOrder(OrderType orderType)
         {
-            _driver.SendKeys(locator, price.ToString());
-        }
-
-        public void SelectOrder(By locator)
-        {
-            if (!_driver.CheckContainsClass(locator, "schema-order__item_active"))
+            if (orderType != GetSelectedOrder())
             {
                 _driver.Click(OrderProductLocator);
-                _driver.Click(locator);
+                switch (orderType)
+                {
+                    case OrderType.Popular:
+                        _driver.Click(PopularSelectLocator);
+                        break;
+                    case OrderType.Cheap:
+                        _driver.Click(CheapSelectLocator);
+                        break;
+                    case OrderType.Expensive:
+                        _driver.Click(ExpensiveSelectLocator);
+                        break;
+                    case OrderType.Newest:
+                        _driver.Click(NewSelectLocator);
+                        break;
+                    case OrderType.Raiting:
+                        _driver.Click(RaitingSelectLocator);
+                        break;
+                    default:
+                        break;
+                }
             }
+        }
 
+        public OrderType GetSelectedOrder()
+        {
+            Dictionary<By, OrderType> orderTypes = new Dictionary<By, OrderType>()
+            {
+                {PopularSelectLocator, OrderType.Popular },
+                {CheapSelectLocator, OrderType.Cheap},
+                {ExpensiveSelectLocator, OrderType.Expensive},
+                {NewSelectLocator, OrderType.Newest},
+                {RaitingSelectLocator, OrderType.Raiting},
+            };
+
+            foreach (var item in orderTypes)
+            {
+                if (_driver.CheckContainsClass(item.Key, "schema-order__item_active"))
+                {
+                    return item.Value;
+                }
+            }
+            return OrderType.Popular;
+        }
+
+        public enum OrderType
+        {
+            Popular, Cheap, Expensive, Newest, Raiting
+        }
+
+        public void SetMinPrice(double minPrice)
+        {
+            _driver.SendKeys(InputPriceFromLocator, minPrice.ToString());
+        }
+
+        public void SetMaxPrice(double maxPrice)
+        {
+            _driver.SendKeys(InputPriceToLocator, maxPrice.ToString());
+        }
+
+        public void SetMinMaxPrice(double minPrice, double maxPrice)
+        {
+            SetMinPrice(minPrice);
+            SetMaxPrice(maxPrice);
         }
 
         public double[] GetPrices()
         {
-            _driver.WaitWhileElementClassContainsText(LoadingProductLocator, "schema-products_processing");
             IList<IWebElement> pricesList = _driver.FindAllElementsWithWaiting(PricesNotebooksLocator);
 
             double[] pricesArray = new double[pricesList.Count];
@@ -130,7 +184,7 @@ namespace OnlinerTests.Pages
 
             foreach (var item in json["products"])
             {
-                list.Add(item["full_name"].ToString().Replace("&quot;","\"").Replace("&#039;","'"));
+                list.Add(item["full_name"].ToString().Replace("&quot;", "\"").Replace("&#039;", "'"));
             }
             return list;
         }

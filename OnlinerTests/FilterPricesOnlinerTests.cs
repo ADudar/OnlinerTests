@@ -12,51 +12,19 @@ namespace OnlinerTests
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-
-            try
-            {
-                catalogPage.SetPriceNotebooks(price, catalogPage.InputPriceFromLocator);
-            }
-            catch
-            {
-                string msg = "error to set min price filter";
-                log.Error(msg);
-                log.Fail(msg);
-                Assert.Fail(msg);
-            }
-
-            log.Info("filter min price set to " + price);
+            catalogPage.SetMinPrice(price);
             string expectedStringPrice = catalogPage.ConvertToStringPriceWithFormat(price);
-
-            try
-            {
-                Assert.AreEqual("от " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter not set");
-                log.Pass("filter min price set success");
-            }
-            catch
-            {
-                string msg = "filter min price not set";
-                log.Error(msg);
-                log.Fail(msg);
-                Assert.Fail(msg);
-            }
-
+            Assert.AreEqual("от " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter label not set");
             double[] prices = catalogPage.GetPrices();
             foreach (var item in prices)
             {
                 if (item < price)
                 {
-                    string msg = "founded items with less price, value: " + item;
-                    log.Error(msg);
-                    Assert.Fail(msg);
-                    log.Fail(msg);
+                    Assert.Fail("founded items with less price, value: " + item);
                     break;
                 }
             }
-            string message = "all items have greater than min price";
-            log.Pass(message);
-            Assert.Pass(message);
+            Assert.Pass("all items have greater than min price");
         }
 
         [TestCase(300, 400)]
@@ -64,44 +32,22 @@ namespace OnlinerTests
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            try
-            {
-                catalogPage.SetPriceNotebooks(minPrice, catalogPage.InputPriceFromLocator);
-                catalogPage.SetPriceNotebooks(maxPrice, catalogPage.InputPriceToLocator);
-            }
-            catch
-            {
-                string msg = "error to set min or max price filter";
-                log.Error(msg);
-                log.Fail(msg);
-                Assert.Fail(msg);
-            }
-
-            log.Info("filter min price set to " + minPrice);
-            log.Info("filter max price set to " + maxPrice);
-
+            catalogPage.SetMinMaxPrice(minPrice, maxPrice);
             string stringMinPrice = catalogPage.ConvertToStringPriceWithFormat(minPrice);
             string stringMaxPrice = catalogPage.ConvertToStringPriceWithFormat(maxPrice);
             string expectedStringPrice = stringMinPrice + " — " + stringMaxPrice;
+            Assert.AreEqual(expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter label not set");
             string priceFromWebdriver = _webDriver.GetText(catalogPage.FilterPriceLocator);
-
             double[] prices = catalogPage.GetPrices();
             foreach (var item in prices)
             {
                 if (item < minPrice || item > maxPrice)
                 {
-                    string msg = "founded items with less or great price";
-                    log.Error(msg);
-                    log.Fail(msg);
-                    Assert.Fail(msg);
+                    Assert.Fail("founded items with less or great price");
                     break;
                 }
             }
-
-            string message = "all items greater than " + stringMinPrice + " and less than " + stringMaxPrice;
-            log.Pass(message);
-            Assert.Pass(message);
+            Assert.Pass("all items greater than " + stringMinPrice + " and less than " + stringMaxPrice);
         }
 
         [TestCase(400)]
@@ -109,52 +55,19 @@ namespace OnlinerTests
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            try
-            {
-                catalogPage.SetPriceNotebooks(price, catalogPage.InputPriceToLocator);
-            }
-            catch
-            {
-                string msg = "error to set max price filter";
-                log.Error(msg);
-                log.Fail(msg);
-                Assert.Fail(msg);
-            }
-
-            log.Info("filter max price set to " + price);
+            catalogPage.SetMaxPrice(price);
             string expectedStringPrice = catalogPage.ConvertToStringPriceWithFormat(price);
-
-            try
-            {
-                Assert.AreEqual("до " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter not set");
-                log.Pass("filter max price set success");
-
-            }
-            catch
-            {
-                string msg = "error to set max price filter";
-                log.Error(msg);
-                log.Fail(msg);
-                Assert.Fail(msg);
-            }
-
+            Assert.AreEqual("до " + expectedStringPrice, _webDriver.GetText(catalogPage.FilterPriceLocator), "Error, filter not set");
             double[] prices = catalogPage.GetPrices();
             foreach (var item in prices)
             {
                 if (item > price)
                 {
-                    string msg = "founded items with greater price";
-                    log.Error(msg);
-                    log.Fail(msg);
-                    Assert.Fail(msg);
+                    Assert.Fail("founded items with greater price");
                     break;
                 }
             }
-            string message = "all items have less than max price";
-            log.Pass(message);
-            Assert.Pass(message);
+            Assert.Pass("all items have less than max price");
         }
     }
-
 }

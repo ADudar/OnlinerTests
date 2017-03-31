@@ -8,46 +8,23 @@ namespace OnlinerTests
 {
     [TestFixture]
     [Parallelizable]
-    public class OrderOnlinerTests : OnlinerTestsSetup
+    public class OrderCheapExpensiveRatingTests : OnlinerTestsSetup
     {
         [Test]
         public void OrderCheapTest()
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.CheapSelectLocator);
-            log.Info("cheap items selected");
-
-            int count = 0;
-            double[] prices = new double[0];
-            while (count < 4)
-            {
-                try
-                {
-                    prices = catalogPage.GetPrices();
-                }
-                catch (StaleElementReferenceException)
-                {
-                    count++;
-                }
-                count = count + 4;
-            }
-
+            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Cheap);
+            double[] prices = catalogPage.GetPrices();
             for (int i = 0; i < prices.Length - 1; i++)
             {
-                if (prices[i] > prices[i+1] )
+                if (prices[i] > prices[i + 1])
                 {
-                    string msg = "Filter cheap is not applied";
-                    log.Error(msg);
-                    log.Fail(msg);
-                    Assert.Fail(msg);
+                    Assert.Fail("Filter cheap is not applied");
                     break;
                 }
             }
-            string message = "filter cheap is apply";
-            log.Pass(message);
-            Assert.Pass(message);
         }
 
         [Test]
@@ -55,39 +32,16 @@ namespace OnlinerTests
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.ExpensiveSelectLocator);
-            log.Info("expensive items selected");
-
-            int count = 0;
-            double[] prices = new double[0];
-            while (count < 4)
-            {
-                try
-                {
-                    prices = catalogPage.GetPrices();
-                }
-                catch (StaleElementReferenceException)
-                {
-                    count++;
-                }
-                count = count + 4;
-            }
-
+            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Expensive);
+            double[] prices = catalogPage.GetPrices();
             for (int i = 0; i < prices.Length - 1; i++)
             {
                 if (prices[i] < prices[i + 1])
                 {
-                    string msg = "Filter expensive is not applied";
-                    log.Error(msg);
-                    log.Fail(msg);
-                    Assert.Fail(msg);
+                    Assert.Fail("Filter expensive is not applied");
                     break;
                 }
             }
-            string message = "filter expensive is apply";
-            log.Pass(message);
-            Assert.Pass(message);
         }
 
         [Test]
@@ -95,39 +49,16 @@ namespace OnlinerTests
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.RaitingSelectLocator);
-            log.Info("rating items selected");
-
-            int count = 0;
-            int[] ratings = new int[0];
-            ratings = catalogPage.GetRatings();
-            while (count < 4)
-            {
-                try
-                {
-                }
-                catch (StaleElementReferenceException)
-                {
-                    count++;
-                }
-                break;
-            }
-
+            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Raiting);
+            int[] ratings = catalogPage.GetRatings();
             for (int i = 0; i < ratings.Length - 1; i++)
             {
                 if (ratings[i] < ratings[i + 1])
                 {
-                    string msg = "Rating filter is not applied";
-                    log.Error(msg);
-                    log.Fail(msg);
-                    Assert.Fail(msg);
+                    Assert.Fail("Rating filter is not applied");
                     break;
                 }
             }
-            string message = "filter rating is apply";
-            log.Pass(message);
-            Assert.Pass(message);
         }
     }
 }

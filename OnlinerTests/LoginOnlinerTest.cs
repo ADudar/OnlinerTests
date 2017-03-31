@@ -23,16 +23,7 @@ namespace OnlinerTests
             User user1 = User.Create(username, password);
             loginPage.Login(user1);
             string loginTitle = _webDriver.GetText(loginPage.AccountTitleLocator);
-            try
-            {
-                Assert.AreEqual("n2440175", username.Substring(0, username.IndexOf('@')));
-                log.Pass("login success");
-            }
-            catch
-            {
-                log.Fail("login failed");
-            }
-
+            Assert.AreEqual("n2440175", username.Substring(0, username.IndexOf('@')));
         }
     }
 }

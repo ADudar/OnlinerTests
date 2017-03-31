@@ -13,54 +13,25 @@ namespace OnlinerTests
     public class OrderNewPopularTests : OnlinerTestsSetup
     {
         [Test]
-        public void OrderNewItemsTest()
+        public void OrderNewTest()
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.NewSelectLocator);
-            log.Info("new items selected");
+            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Newest);
             IList<string> fullNamesApi = catalogPage.GetNotebooksFullNames("https://catalog.api.onliner.by/search/notebook?group=0&order=date:desc");
-            log.Info("get fullnames from api success");
             IList<string> fullnamesDriver = catalogPage.GetNotebooksFullNames(catalogPage.FullNameItemsLocator);
-            log.Info("get fullnames from webDriver success");
-
-            string msg = "Fullname not match";
-            try
-            {
-                Assert.AreEqual(fullNamesApi, fullnamesDriver, msg);
-                log.Pass("All fullnames match");
-            }
-            catch (Exception)
-            {
-                log.Fail(msg);
-            }
+            Assert.AreEqual(fullNamesApi, fullnamesDriver, "Fullname not match");
         }
 
         [Test]
-        public void OrderPopularItemsTest()
+        public void OrderPopularTest()
         {
             var catalogPage = new CatalogPageOnliner(_webDriver);
             catalogPage.Open();
-            log.Info("navigate to notebooks page success");
-            catalogPage.SelectOrder(catalogPage.PopularSelectLocator);
-            log.Info("popular items selected");
+            catalogPage.SelectOrder(CatalogPageOnliner.OrderType.Popular);
             IList<string> fullNamesApi = catalogPage.GetNotebooksFullNames("https://catalog.api.onliner.by/search/notebook?group=1&order=rating:desc");
-            log.Info("get fullnames from api success");
             IList<string> fullnamesDriver = catalogPage.GetNotebooksFullNames(catalogPage.FullNameItemsLocator);
-            log.Info("get fullnames from webDriver success");
-
-            string msg = "Fullname not match";
-            try
-            {
-                Assert.AreEqual(fullNamesApi, fullnamesDriver, msg);
-                log.Pass("All fullnames match");
-            }
-            catch (Exception)
-            {
-                log.Fail(msg);
-            }
-
+                Assert.AreEqual(fullNamesApi, fullnamesDriver, "Fullname not match");
         }
     }
 }
