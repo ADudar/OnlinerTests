@@ -1,10 +1,5 @@
 ﻿using NUnit.Framework;
 using OnlinerTests.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlinerTests
 {
@@ -12,12 +7,13 @@ namespace OnlinerTests
     [Parallelizable]
     public class FilterProcessorTests : OnlinerTestsSetup
     {
-        [TestCase("AMD A6")]
-        public void FilterAMD_A6Test(string processorModel)
+        [TestCaseSource(typeof(ProcessorType), "processors")]
+        public void FilterProcessorTest(string processorModel, NotebooksPageOnliner.ProcessorType type)
         {
             var notebooksPage = new NotebooksPageOnliner(_webDriver);
             notebooksPage.Open();
-            notebooksPage.SelectProcessor(NotebooksPageOnliner.ProcessorType.AMD_A6);
+            notebooksPage.SelectProcessor(type);
+            notebooksPage.WaitAjaxResponse();
             string[] prices = notebooksPage.GetDescription();
             foreach (var item in prices)
             {
@@ -26,6 +22,16 @@ namespace OnlinerTests
                     Assert.Fail("item with description " + item + " not contains model " + processorModel);
                 }
             }
+            string message = "filter processor: " + processorModel + "success";
+            log.Pass(message);
         }
+    }
+
+    class ProcessorType
+    {
+        static object[] processors = {
+        new object[] { "AMD A10", NotebooksPageOnliner.ProcessorType.AMD_A10},
+        new object[] { "AMD A6", NotebooksPageOnliner.ProcessorType.AMD_A6}
+    };
     }
 }

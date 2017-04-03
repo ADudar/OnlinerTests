@@ -7,11 +7,6 @@ namespace OnlinerTests
         protected WebDriver _webDriver;
         protected Logger log;
 
-        //protected ExtentReports er = new ExtentReports();
-        //private static ExtentReports _extent = Logger.Instance;
-        //private static ThreadLocal<ExtentTest> _test;
-        //object myLock = new object();
-
         [OneTimeSetUp]
         protected void OneTimeSetup()
         {
@@ -21,14 +16,14 @@ namespace OnlinerTests
         [SetUp]
         public void Setup()
         {
-            Logger.CreateTest(TestContext.CurrentContext.Test.MethodName);
+            log.CreateTest(TestContext.CurrentContext.Test.Name);
             _webDriver = new WebDriver(log);
         }
 
         [TearDown]
         public void TearDown()
         {
-            log.TearDown();
+            log.WriteResults(_webDriver.Driver);
             _webDriver.Quit();
         }
 

@@ -12,16 +12,11 @@ namespace OnlinerTests.Pages
             _driver = driver;
         }
 
-
+        #region locators
         public By InputPriceFromLocator { get; set; } = By.XPath("//input[contains(@class, 'schema-filter__number-input_price') and contains(@data-bind, 'value: facet.value.from')]");
-
         public By InputPriceToLocator { get; set; } = By.XPath("//input[contains(@class, 'schema-filter__number-input_price') and contains(@data-bind, 'value: facet.value.to')]");
-
         public By FilterPriceLabelLocator { get; set; } = By.ClassName("schema-tags__text");
-
-        //public By PricesItemsLocator { get; set; } = By.XPath("//a[contains(@class, 'schema-product__price-value_primary')]/span[contains(@data-bind,'minPrice')]");
-
-
+        #endregion
 
         public void SetMinPrice(double minPrice)
         {
@@ -38,8 +33,6 @@ namespace OnlinerTests.Pages
             SetMinPrice(minPrice);
             SetMaxPrice(maxPrice);
         }
-
-
 
         public string ConvertToStringPriceWithFormat(double price)
         {

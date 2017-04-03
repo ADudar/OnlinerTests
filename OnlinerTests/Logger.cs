@@ -2,55 +2,56 @@
 using AventStack.ExtentReports.Reporter;
 using NUnit.Framework;
 using System;
-using System.Threading;
 using System.IO;
+using OpenQA.Selenium;
+using NUnit.Framework.Interfaces;
 
 namespace OnlinerTests
 {
     public class Logger
     {
-        //protected ExtentReports _extent = new ExtentReports();
-        protected static  ExtentTest _test;
-        private static ThreadLocal<ExtentTest> _thread;
-        private static readonly ExtentReports _instance = new ExtentReports();
-
-        public static ExtentReports Instance
-        {
-            get
-            {
-                return _instance;
-            }
-        }
+        private ExtentTest _test;
+        private static ExtentReports _extent;
+        private static string debugPath = TestContext.CurrentContext.TestDirectory;
+        private static string projectPath = debugPath.Substring(0, debugPath.IndexOf("bin"));
+        private static DateTime d = DateTime.Now;
+        private static string fileName = d.Day + "." + d.Month + "." + d.Year + "__" + d.Hour + "_" + d.Minute + "_" + d.Second;
+        static int i = 1;
 
         public Logger() { }
 
-        static  Logger()
+        static Logger()
         {
-            string path = System.Reflection.Assembly.GetCallingAssembly().CodeBase;
-            string actualPath = path.Substring(0, path.LastIndexOf("bin"));
-            string projectPath = new Uri(actualPath).LocalPath;
-            Directory.CreateDirectory(projectPath + "Reports");
-
-            string reportPath = projectPath + "Reports\\Report" + TestContext.CurrentContext.Test.FullName + ".html";
-            Instance.AttachReporter(new ExtentHtmlReporter(reportPath));
+            string filepath = Path.Combine(projectPath, "Reports", fileName) + ".html";
+            _extent = new ExtentReports();
+            _extent.AddSystemInfo("OS", Environment.OSVersion.VersionString);
+            _extent.AddSystemInfo("Author", Environment.UserName);
+            var htmlreport = new ExtentHtmlReporter(filepath);
+            htmlreport.AppendExisting = false;
+            htmlreport.LoadConfig(Path.Combine(projectPath, "Report.config"));
+            _extent.AttachReporter(htmlreport);
         }
 
-        public static ExtentTest GetTest(string text)
+        public void WriteResults(IWebDriver _driver)
         {
-            //CreateTest(text);
-            return _thread.Value;
+            var status = TestContext.CurrentContext.Result.Outcome.Status;
+            var stackTrace = "<pre>" + TestContext.CurrentContext.Result.StackTrace + "</pre>";
+            var errorMessage = TestContext.CurrentContext.Result.Message;
+            if (status == TestStatus.Failed)
+            {
+                _test.Fail( stackTrace + errorMessage );
+                ITakesScreenshot ts = (ITakesScreenshot)_driver;
+                Screenshot screenshot = ts.GetScreenshot();
+                string imageFilePath = Path.Combine(projectPath, "Reports", fileName + "(" + i++ + ")") + ".png";
+                screenshot.SaveAsFile(imageFilePath, ScreenshotImageFormat.Png);
+                _test.AddScreenCaptureFromPath(imageFilePath);
+            }
+            _test.Info("write results success");
         }
 
-        public static void CreateTest(string text)
+        public  void CreateTest(string testname, string d = null)
         {
-            //_test = Instance.CreateTest(text);
-            if (_thread== null)
-                _thread = new ThreadLocal<ExtentTest>();
-
-            var t = Instance.CreateTest(text);
-            _thread.Value = t;
-            //return t;
-            _test = t;
+            _test = _extent.CreateTest(testname, d);
         }
 
         public void Info(string text)
@@ -85,22 +86,7 @@ namespace OnlinerTests
 
         public void Flush()
         {
-                Instance.Flush();
-        }
-
-        public void TearDown()
-        {
-            var testStatus = TestContext.CurrentContext.Result.Outcome.Status;
-            var stackTrace = "<pre>" +  TestContext.CurrentContext.Result.StackTrace + "</pre>";
-            var testMessage = TestContext.CurrentContext.Result.Message;
-            if (testStatus == NUnit.Framework.Interfaces.TestStatus.Failed)
-            {
-                Fail(stackTrace + testMessage);
-            }
-            else if (testStatus == NUnit.Framework.Interfaces.TestStatus.Passed)
-            {
-                Pass(testMessage);
-            }
+                _extent.Flush();
         }
     }
 }

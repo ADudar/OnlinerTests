@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExtentReports, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AventStack.ExtentReports-3.0.2\ExtentReports.dll</HintPath>
+    <Reference Include="ExtentReports, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExtentReports.3.0.2\lib\ExtentReports.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -65,13 +65,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FilterPricesOnlinerTests.cs" />
-    <Compile Include="FilterProcessorTests.cs" />
-    <Compile Include="LoginOnlinerTest.cs" />
+    <Compile Include="Tests\FilterPricesOnlinerTests.cs" />
+    <Compile Include="Tests\FilterProcessorTests.cs" />
+    <Compile Include="Tests\LoginOnlinerTest.cs" />
     <Compile Include="OnlinerTestsSetup.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="OrderNewPopularTests.cs" />
-    <Compile Include="OrderOnlinerTests.cs" />
+    <Compile Include="Tests\OrderNewPopularTests.cs" />
+    <Compile Include="Tests\OrderCheapExpensiveRatingTests.cs" />
     <Compile Include="Pages\CatalogPageOnliner.cs" />
     <Compile Include="Pages\FilterPricePageOnliner.cs" />
     <Compile Include="Pages\LoginPageOnliner.cs" />
@@ -86,6 +86,7 @@
     <None Include="packages.config" />
     <None Include="Grid\StartHub.bat" />
     <None Include="Grid\StartNode.bat" />
+    <None Include="Report.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

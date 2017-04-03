@@ -71,10 +71,11 @@ namespace OnlinerTests
                         break;
                 }
             }
-            _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
+            _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(15));
             _wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementReferenceException));
             _wait.PollingInterval = TimeSpan.FromSeconds(1);
             Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            Driver.Manage().Window.Maximize();
         }
 
         internal void WaitPageLoaded()
@@ -128,7 +129,11 @@ namespace OnlinerTests
         {
             //Driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(3));
             _logger.Info("wait all elements from locator " + locator);
-           _wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(locator));
+            try
+            {
+                _wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(locator));
+            }
+            catch {}
             var collection = _wait.Until(d => d.FindElements(locator));
             _logger.Info("count finded elements: " + collection.Count);
             return collection;
@@ -148,5 +153,19 @@ namespace OnlinerTests
             _logger.Info("result of find element" + (result));
             return result;
         }
+
+        public void Scroll(int pixels)
+        {
+            IJavaScriptExecutor jse = (IJavaScriptExecutor)Driver;
+            //jse.ExecuteScript("scroll(0," +  pixels + ");");
+            jse.ExecuteScript($"scroll(0, { pixels });");
+        }
+
+        public IWebElement GetElementWithWaiting(By locator)
+        {
+            return WaitElement(locator);
+        }
+
+
     }
 }
