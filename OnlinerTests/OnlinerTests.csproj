@@ -65,18 +65,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tests\FilterPricesOnlinerTests.cs" />
-    <Compile Include="Tests\FilterProcessorTests.cs" />
+    <Compile Include="DataOrder.cs" />
+    <Compile Include="Tests\FilterPricesNotebooksTests.cs" />
+    <Compile Include="Tests\FilterProcessorsTests.cs" />
     <Compile Include="Tests\LoginOnlinerTest.cs" />
-    <Compile Include="OnlinerTestsSetup.cs" />
+    <Compile Include="TestsSetup.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Tests\OrderNewPopularTests.cs" />
-    <Compile Include="Tests\OrderCheapExpensiveRatingTests.cs" />
-    <Compile Include="Pages\CatalogPageOnliner.cs" />
-    <Compile Include="Pages\FilterPricePageOnliner.cs" />
-    <Compile Include="Pages\LoginPageOnliner.cs" />
-    <Compile Include="Pages\NotebooksPageOnliner.cs" />
-    <Compile Include="Pages\OrderPageOnliner.cs" />
+    <Compile Include="Tests\OrderRefrigeratorsTests.cs" />
+    <Compile Include="Tests\OrderTVsTests.cs" />
+    <Compile Include="Tests\OrderNotebooksTests.cs" />
+    <Compile Include="Pages\ResultsComponent.cs" />
+    <Compile Include="Pages\FilterComponent.cs" />
+    <Compile Include="Pages\LoginComponent.cs" />
+    <Compile Include="Pages\FilterNotebooksCompoent.cs" />
+    <Compile Include="Pages\OrderComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User.cs" />
     <Compile Include="WebDriver.cs" />

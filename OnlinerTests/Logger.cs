@@ -14,19 +14,20 @@ namespace OnlinerTests
         private static ExtentReports _extent;
         private static string debugPath = TestContext.CurrentContext.TestDirectory;
         private static string projectPath = debugPath.Substring(0, debugPath.IndexOf("bin"));
-        private static DateTime d = DateTime.Now;
-        private static string fileName = d.Day + "." + d.Month + "." + d.Year + "__" + d.Hour + "_" + d.Minute + "_" + d.Second;
-        static int i = 1;
+        private static string reportFileName = DateTime.Now.ToString("dd.MM.yyyy__HH.mm.ss");
+        private static string dirAllReportsName = "Reports";
+        private static string dirReportName = DateTime.Now.ToString("dd.MM.yyyy__HH.mm.ss");
+        private static int screenshotIndex = 1;
 
         public Logger() { }
 
         static Logger()
         {
-            string filepath = Path.Combine(projectPath, "Reports", fileName) + ".html";
+            string reportPath = Path.Combine(projectPath, dirAllReportsName, dirReportName,  reportFileName) + ".html";
             _extent = new ExtentReports();
             _extent.AddSystemInfo("OS", Environment.OSVersion.VersionString);
             _extent.AddSystemInfo("Author", Environment.UserName);
-            var htmlreport = new ExtentHtmlReporter(filepath);
+            var htmlreport = new ExtentHtmlReporter(reportPath);
             htmlreport.AppendExisting = false;
             htmlreport.LoadConfig(Path.Combine(projectPath, "Report.config"));
             _extent.AttachReporter(htmlreport);
@@ -34,22 +35,22 @@ namespace OnlinerTests
 
         public void WriteResults(IWebDriver _driver)
         {
+            Directory.CreateDirectory(Path.Combine(projectPath, dirAllReportsName, dirReportName));
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var stackTrace = "<pre>" + TestContext.CurrentContext.Result.StackTrace + "</pre>";
             var errorMessage = TestContext.CurrentContext.Result.Message;
             if (status == TestStatus.Failed)
             {
-                _test.Fail( stackTrace + errorMessage );
-                ITakesScreenshot ts = (ITakesScreenshot)_driver;
-                Screenshot screenshot = ts.GetScreenshot();
-                string imageFilePath = Path.Combine(projectPath, "Reports", fileName + "(" + i++ + ")") + ".png";
+                _test.Fail(stackTrace + errorMessage);
+                Screenshot screenshot = ((ITakesScreenshot)_driver).GetScreenshot();
+                string imageFilePath = Path.Combine(projectPath, dirAllReportsName, dirReportName, reportFileName + "_" + screenshotIndex++) + ".png";
                 screenshot.SaveAsFile(imageFilePath, ScreenshotImageFormat.Png);
                 _test.AddScreenCaptureFromPath(imageFilePath);
             }
             _test.Info("write results success");
         }
 
-        public  void CreateTest(string testname, string d = null)
+        public void CreateTest(string testname, string d = null)
         {
             _test = _extent.CreateTest(testname, d);
         }
@@ -86,7 +87,7 @@ namespace OnlinerTests
 
         public void Flush()
         {
-                _extent.Flush();
+            _extent.Flush();
         }
     }
 }

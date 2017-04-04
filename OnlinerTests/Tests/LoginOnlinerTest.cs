@@ -6,12 +6,12 @@ namespace OnlinerTests
 {
     [TestFixture]
     [Parallelizable]
-    public class LoginOnlinerTest : OnlinerTestsSetup
+    public class LoginOnlinerTest : TestsSetup
     {
         [Test]
         public void LoginOnliner()
         {
-            var loginPage = new LoginPageOnliner(_webDriver);
+            var loginPage = new LoginComponent(_webDriver);
             loginPage.Open();
             string username = ConfigurationManager.AppSettings["Username"];
             string password = ConfigurationManager.AppSettings["Password"];

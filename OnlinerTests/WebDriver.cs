@@ -12,7 +12,7 @@ namespace OnlinerTests
 {
     public class WebDriver
     {
-        public IWebDriver Driver { get; }
+        public IWebDriver Driver { get; set; }
         public IWait<IWebDriver> _wait;
         public DesiredCapabilities capabilities;
         Logger _logger;
@@ -23,25 +23,24 @@ namespace OnlinerTests
             _logger = logger;
             if (ConfigurationManager.AppSettings["GridEnabled"] == "true")
             {
-                _logger.Info("Webdriver run from grid");
                 capabilities = new DesiredCapabilities();
                 switch (browser)
                 {
                     case "Chrome":
-                        _logger.Info("Webdriver run with Chrome");
+                        _logger.Info("Webdriver run with grid Chrome");
                         capabilities = DesiredCapabilities.Chrome();
                         break;
                     case "IE":
                     case "Internet Explorer":
-                        _logger.Info("Webdriver run with IE");
+                        _logger.Info("Webdriver run with grid IE");
                         capabilities = DesiredCapabilities.InternetExplorer();
                         break;
                     case "Firefox":
-                        _logger.Info("Webdriver run with Firefox");
+                        _logger.Info("Webdriver run with grid Firefox");
                         capabilities = DesiredCapabilities.Firefox();
                         break;
                     default:
-                        _logger.Info("Webdriver run with default browser Chrome");
+                        _logger.Info("Webdriver run with grid default browser Chrome");
                         capabilities = DesiredCapabilities.Chrome();
                         break;
                 }
@@ -78,68 +77,72 @@ namespace OnlinerTests
             Driver.Manage().Window.Maximize();
         }
 
-        internal void WaitPageLoaded()
+        internal void WaitPageLoad()
         {
             _wait.Until(_driver => ((IJavaScriptExecutor)_driver).ExecuteScript("return document.readyState").Equals("complete"));
-
         }
 
         public void Quit()
         {
-            _logger.Info("quit success");
             Driver.Quit();
+            _logger.Info("quit success");
         }
 
         public void Navigate(string url)
         {
-            _logger.Info("Navigate to " + url);
             Driver.Navigate().GoToUrl(url);
+            _logger.Info("Navigate to " + url);
         }
 
         public void SendKeys(By locator, string text)
         {
-            var element = WaitElement(locator);
+            var element = WaitElementVisible(locator);
             _logger.Info("send keys to element: " + element.TagName + " value: " + text);
             element.SendKeys(text);
         }
 
         public void Click(By locator)
         {
-            var element = WaitElement(locator);
-            _logger.Info("click to element: " + element.TagName);
+            var element = Driver.FindElement(locator);
+            _logger.Info("click to element: " + element.TagName + " locator: " + locator);
             element.Click();
         }
 
         public string GetText(By locator)
         {
-            string findedText = WaitElement(locator).Text;
+            string findedText = WaitElementVisible(locator).Text;
             _logger.Info("finded text: " + findedText);
             return findedText;
         }
 
-        public IWebElement WaitElement(By locator)
+        public IWebElement WaitElementVisible(By locator)
         {
-            _logger.Info("wait element from locator: " + locator);
             var element = _wait.Until(ExpectedConditions.ElementIsVisible(locator));
-            _logger.Info("finded element: " + element.TagName + ", is enabled: " + element.Enabled);
+            _logger.Info("finded element from locator: " + locator + ", tagName: " + element.TagName + ", is enabled: " + element.Enabled);
+            return element;
+        }
+
+        internal IWebElement WaitElementClickable(By locator)
+        {
+            var element = _wait.Until(ExpectedConditions.ElementToBeClickable(locator));
+            _logger.Info("finded element from locator: " + locator + ", tagName: " + element.TagName + ", is enabled: " + element.Enabled);
             return element;
         }
 
         public IList<IWebElement> FindAllElementsWithWaiting(By locator)
         {
-            //Driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(3));
             _logger.Info("wait all elements from locator " + locator);
             try
             {
                 _wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(locator));
             }
-            catch {}
+            catch { }
             var collection = _wait.Until(d => d.FindElements(locator));
             _logger.Info("count finded elements: " + collection.Count);
             return collection;
         }
 
-        public bool WaitWhileElementClassContainsText(By locator, string text)
+        public bool WaitWhileElementClassNotContainsText(By locator, string text)
         {
             _logger.Info("wait element from locator: " + locator);
             bool result = _wait.Until(d => !d.FindElement(locator).GetAttribute("class").Contains(text));
@@ -157,15 +160,7 @@ namespace OnlinerTests
         public void Scroll(int pixels)
         {
             IJavaScriptExecutor jse = (IJavaScriptExecutor)Driver;
-            //jse.ExecuteScript("scroll(0," +  pixels + ");");
             jse.ExecuteScript($"scroll(0, { pixels });");
         }
-
-        public IWebElement GetElementWithWaiting(By locator)
-        {
-            return WaitElement(locator);
-        }
-
-
     }
 }
