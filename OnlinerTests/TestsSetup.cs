@@ -2,7 +2,7 @@
 
 namespace OnlinerTests
 {
-    public class TestsSetup
+    public abstract class TestsSetup
     {
         protected WebDriver _webDriver;
         protected Logger log;

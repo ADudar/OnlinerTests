@@ -18,7 +18,6 @@ namespace OnlinerTests.Pages
         }
 
         #region locators
-        public By NotebooksLinkLocator { get; set; } = By.XPath("//a[@href='https://catalog.onliner.by/notebook']/span/span[@class='project-navigation__sign']");
         public By PricesItemsLocator { get; set; } = By.XPath("//a[contains(@class, 'schema-product__price-value_primary')]/span[contains(@data-bind,'minPrice')]");
         public By LoadingProductLocator { get; set; } = By.CssSelector(".schema-products");
         public By RaitingItemsLocator { get; set; } = By.CssSelector(".rating");
@@ -27,12 +26,7 @@ namespace OnlinerTests.Pages
         public By DescriptionItemsLocator { get; set; } = By.CssSelector(".schema-product__description>span");
         #endregion
 
-        /// <summary>
-        /// get
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        internal IList<string> GetFullNames(string url)
+        internal IList<string> GetFullNamesFromUrl(string url)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
             request.Method = WebRequestMethods.Http.Get;
@@ -43,54 +37,32 @@ namespace OnlinerTests.Pages
             {
                 text = sr.ReadToEnd();
             }
-            IList<string> list = new List<string>(30);
             JObject json = JObject.Parse(text);
-
-            foreach (var item in json["products"])
-            {
-                list.Add(item["extended_name"].ToString().Replace("&quot;", "\"").Replace("&#039;", "'"));
-            }
-            return list;
+            return json["products"].Select(item => 
+            item["extended_name"].ToString().Replace("&quot;", "\"").Replace("&#039;", "'")).ToList();
         }
 
-        internal IList<string> GetFullNames(By locator)
+        internal IList<string> GetFullNamesFromLocator(By locator)
         {
             IList<IWebElement> fullnamesList = _driver.FindAllElementsWithWaiting(locator);
-            IList<string> fullnames = new List<string>(fullnamesList.Count);
-            foreach (var item in fullnamesList)
-            {
-                fullnames.Add(item.GetAttribute("innerHTML"));
-            }
-            return fullnames;
+            return fullnamesList.Select(el => el.GetAttribute("innerHTML")).ToList();
         }
 
         internal  double[] GetRatings()
         {
             IList<IWebElement> ratingList = _driver.FindAllElementsWithWaiting(RaitingItemsLocator);
-            double[] ratings = new double[ratingList.Count];
-            int i = 0;
-            foreach (var item in ratingList)
-            {
-                string classname = item.GetAttribute("class");
-                int pos = classname.IndexOf('_');
-                ratings[i++] = Convert.ToInt32(classname.Substring(pos + 1, classname.Length - (pos + 1)));
-            }
-            return ratings;
+            return ratingList.Select(el => 
+            Convert.ToDouble(el.GetAttribute("class")
+            .Substring(el.GetAttribute("class").IndexOf('_') + 1, el.GetAttribute("class").Length -(el.GetAttribute("class").IndexOf('_')+1) ))).ToArray();
         }
 
         internal  double[] GetPrices()
         {
             IList<IWebElement> pricesList = _driver.FindAllElementsWithWaiting(PricesItemsLocator);
-
-            double[] pricesArray = new double[pricesList.Count];
-            int i = 0;
-
-            foreach (var item in pricesList)
-            {
-                string processedItem = item.GetAttribute("innerHTML").Replace("&nbsp;", "").Replace("р.", "").Replace(',', '.');
-                pricesArray[i++] = Convert.ToDouble(processedItem);
-            }
-            return pricesArray;
+            return pricesList.Select(el => 
+                    Convert.ToDouble(el.GetAttribute("innerHTML")
+                                       .Replace("&nbsp;", "").Replace("р.", "")
+                                       .Replace(',', '.'))).ToArray();
         }
 
         internal void WaitPageLoad()
@@ -108,14 +80,7 @@ namespace OnlinerTests.Pages
         internal string[] GetDescription()
         {
             IList<IWebElement> descriptionList = _driver.FindAllElementsWithWaiting(DescriptionItemsLocator);
-            string[] pricesArray = new string[descriptionList.Count];
-            //int i = 0;
-            //foreach (var item in descriptionList)
-            //{
-            //    pricesArray[i++] = item.GetAttribute("innerHTML");
-            //}
-            //return pricesArray;
-            return descriptionList.Select(d => d.GetAttribute("innerHTML")).ToArray();
+            return descriptionList.Select(el => el.GetAttribute("innerHTML")).ToArray();
         }
 
         public void Open(string url)

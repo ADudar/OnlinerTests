@@ -5,18 +5,21 @@ namespace OnlinerTests.Pages
 {
     public class FilterComponent
     {
-        private WebDriver _driver;
+        protected WebDriver _driver;
 
         public FilterComponent(WebDriver driver)
         {
             _driver = driver;
         }
 
+
         #region locators
         public By InputPriceFromLocator { get; set; } = By.XPath("//input[contains(@class, 'schema-filter__number-input_price') and contains(@data-bind, 'value: facet.value.from')]");
         public By InputPriceToLocator { get; set; } = By.XPath("//input[contains(@class, 'schema-filter__number-input_price') and contains(@data-bind, 'value: facet.value.to')]");
         public By FilterPriceLabelLocator { get; set; } = By.ClassName("schema-tags__text");
         #endregion
+
+
 
         public void SetMinPrice(double minPrice)
         {

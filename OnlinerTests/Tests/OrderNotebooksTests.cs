@@ -15,6 +15,7 @@ namespace OnlinerTests
             var catalogPage = new ResultsComponent(_webDriver);
             catalogPage.Open("https://catalog.onliner.by/notebook");
             orderPage.SelectOrder(OrderComponent.OrderType.Cheap);
+            catalogPage.WaitPageLoad();
             orderPage.SelectState(OrderComponent.OrderState.New);
             catalogPage.WaitPageLoad();
             double[] items = catalogPage.GetPrices();
@@ -80,13 +81,13 @@ namespace OnlinerTests
         {
             var orderPage = new OrderComponent(_webDriver);
             var catalogPage = new ResultsComponent(_webDriver);
-            IList<string> fullNamesApi = catalogPage.GetFullNames(url);
+            IList<string> fullNamesApi = catalogPage.GetFullNamesFromUrl(url);
             catalogPage.Open("https://catalog.onliner.by/notebook");
             orderPage.SelectOrder(orderType);
             catalogPage.WaitPageLoad();
             orderPage.SelectState(OrderComponent.OrderState.New);
             catalogPage.WaitPageLoad();
-            IList<string> fullnamesDriver = catalogPage.GetFullNames(catalogPage.FullNameItemsLocator);
+            IList<string> fullnamesDriver = catalogPage.GetFullNamesFromLocator(catalogPage.FullNameItemsLocator);
             Assert.AreEqual(fullNamesApi, fullnamesDriver, "Fullname not match");
             string message = $"Success apply { orderType } filter";
             log.Pass(message);

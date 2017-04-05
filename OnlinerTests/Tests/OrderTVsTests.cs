@@ -88,8 +88,8 @@ namespace OnlinerTests
             catalogPage.WaitPageLoad();
             orderPage.SelectState(OrderComponent.OrderState.New);
             catalogPage.WaitPageLoad();
-            IList<string> fullNamesApi = catalogPage.GetFullNames(url);
-            IList<string> fullnamesDriver = catalogPage.GetFullNames(catalogPage.FullNameItemsLocator);
+            IList<string> fullNamesApi = catalogPage.GetFullNamesFromUrl(url);
+            IList<string> fullnamesDriver = catalogPage.GetFullNamesFromLocator(catalogPage.FullNameItemsLocator);
             Assert.AreEqual(fullNamesApi, fullnamesDriver, "Fullname not match");
             string message = $"Success apply { orderType } filter";
             log.Pass(message);

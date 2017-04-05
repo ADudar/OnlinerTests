@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace OnlinerTests.Pages
 {
@@ -29,59 +30,51 @@ namespace OnlinerTests.Pages
 
         #region locators
         public By OrderProductLocator { get; set; } = By.CssSelector(".schema-order__link");
-        public By PopularSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(1)");
-        public By CheapSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(2)");
-        public By ExpensiveSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(3)");
-        public By NewestSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(4)");
-        public By RaitingSelectLocator { get; set; } = By.CssSelector(".schema-order__item:nth-of-type(5)");
         public By SchemaOrderOpenLocator { get; set; } = By.CssSelector(".schema-order_opened");
-        public By StateAllLocator { get; set; } = By.CssSelector("input[value=all]+span");
-        public By StateNewLocator { get; set; } = By.CssSelector("input[value=new]+span");
-        public By StateSecondLocator { get; set; } = By.CssSelector("input[value=second]+span");
         public By StateSpanLocator { get; set; } = By.CssSelector(".schema-filter-control__switcher-state+span");
         #endregion
 
-        //public By GetLocatorForOrderType(OrderType orderType)
-        //{
-        //    Console.WriteLine("{0}, {1}", 10, 20);
-        //    var format = ".schema-order__item:nth-of-type({0})";
-        //    switch (orderType)
-        //    {
-        //        case OrderType.Popular:
-        //            return By.CssSelector(string.Format(format, 0));
-        //        case OrderType.Cheap:
-        //            return By.CssSelector(string.Format(format, 1));
-        //            break;
-        //        case OrderType.Expensive:
-        //            break;
-        //        case OrderType.Newest:
-        //            break;
-        //        case OrderType.Raiting:
-        //            break;
-        //        default:
-        //            throw new Exception($"Unknown order type: {orderType}");
-        //    }
-        //    return By.CssSelector($);
-        //}
-
-        internal void SelectState(OrderState state)
+        public By GetLocatorForOrderType(OrderType orderType)
         {
-            if (state != GetSelectedState())
+            var orderTypeLocator = ".schema-order__item:nth-of-type({0})";
+            switch (orderType)
             {
-                switch (state)
-                {
-                    case OrderState.All:
-                        _driver.Click(StateAllLocator);
-                        break;
-                    case OrderState.New:
-                        _driver.Click(StateNewLocator);
-                        break;
-                    case OrderState.Second:
-                        _driver.Click(StateSecondLocator);
-                        break;
-                    default:
-                        break;
-                }
+                case OrderType.Popular:
+                    return By.CssSelector(string.Format(orderTypeLocator, (int)OrderType.Popular));
+                case OrderType.Cheap:
+                    return By.CssSelector(string.Format(orderTypeLocator, (int)OrderType.Cheap));
+                case OrderType.Expensive:
+                    return By.CssSelector(string.Format(orderTypeLocator, (int)OrderType.Expensive));
+                case OrderType.Newest:
+                    return By.CssSelector(string.Format(orderTypeLocator, (int)OrderType.Newest));
+                case OrderType.Raiting:
+                    return By.CssSelector(string.Format(orderTypeLocator, (int)OrderType.Raiting));
+                default:
+                    throw new Exception($"Unknown order type: {orderType}");
+            }
+        }
+
+        public By GetLocatorForOrderState(OrderState orderState)
+        {
+            var orderStateLocator = "input[value={0}]+span";
+            switch (orderState)
+            {
+                case OrderState.All:
+                    return By.CssSelector(string.Format(orderStateLocator, OrderState.All.ToString().ToLower()));
+                case OrderState.New:
+                    return By.CssSelector(string.Format(orderStateLocator, OrderState.New.ToString().ToLower()));
+                case OrderState.Second:
+                    return By.CssSelector(string.Format(orderStateLocator, OrderState.Second.ToString().ToLower()));
+                default:
+                    throw new Exception($"Unknown order state: {orderState}");
+            }
+        }
+
+        internal void SelectState(OrderState orderState)
+        {
+            if (orderState != GetSelectedState())
+            {
+                _driver.Click(GetLocatorForOrderState(orderState));
             }
         }
 
@@ -89,9 +82,9 @@ namespace OnlinerTests.Pages
         {
             Dictionary<By, OrderState> orderStates = new Dictionary<By, OrderState>()
             {
-                {StateAllLocator, OrderState.All},
-                {StateNewLocator, OrderState.New},
-                {StateSecondLocator, OrderState.Second}
+                {GetLocatorForOrderState(OrderState.All), OrderState.All},
+                {GetLocatorForOrderState(OrderState.New), OrderState.New},
+                {GetLocatorForOrderState(OrderState.Second), OrderState.Second}
             };
 
             foreach (var item in orderStates)
@@ -110,26 +103,7 @@ namespace OnlinerTests.Pages
             if (orderType != GetSelectedOrder())
             {
                 _driver.Click(OrderProductLocator);
-                switch (orderType)
-                {
-                    case OrderType.Popular:
-                        _driver.Click(PopularSelectLocator);
-                        break;
-                    case OrderType.Cheap:
-                        _driver.Click(CheapSelectLocator);
-                        break;
-                    case OrderType.Expensive:
-                        _driver.Click(ExpensiveSelectLocator);
-                        break;
-                    case OrderType.Newest:
-                        _driver.Click(NewestSelectLocator);
-                        break;
-                    case OrderType.Raiting:
-                        _driver.Click(RaitingSelectLocator);
-                        break;
-                    default:
-                        break;
-                }
+                        _driver.Click(GetLocatorForOrderType(orderType));
             }
         }
 
@@ -137,13 +111,12 @@ namespace OnlinerTests.Pages
         {
             Dictionary<By, OrderType> orderTypes = new Dictionary<By, OrderType>()
             {
-                {PopularSelectLocator, OrderType.Popular },
-                {CheapSelectLocator, OrderType.Cheap},
-                {ExpensiveSelectLocator, OrderType.Expensive},
-                {NewestSelectLocator, OrderType.Newest},
-                {RaitingSelectLocator, OrderType.Raiting},
+                {GetLocatorForOrderType(OrderType.Popular), OrderType.Popular },
+                {GetLocatorForOrderType(OrderType.Cheap), OrderType.Cheap},
+                {GetLocatorForOrderType(OrderType.Expensive), OrderType.Expensive},
+                {GetLocatorForOrderType(OrderType.Newest), OrderType.Newest},
+                {GetLocatorForOrderType(OrderType.Raiting), OrderType.Raiting},
             };
-
             foreach (var item in orderTypes)
             {
                 if (_driver.CheckContainsClass(item.Key, "schema-order__item_active"))

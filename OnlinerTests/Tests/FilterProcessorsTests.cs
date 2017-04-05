@@ -1,40 +1,41 @@
 ﻿using NUnit.Framework;
 using OnlinerTests.Pages;
+using System;
+using System.Linq;
 
 namespace OnlinerTests
 {
+    using static FilterNotebooksComponent;
+    using static FilterNotebooksComponent.ProcessorType;
+
     [TestFixture]
     [Parallelizable]
     public class FilterProcessorsTests : TestsSetup
     {
-        [TestCaseSource(typeof(ProcessorType), "processors")]
-        public void FilterProcessorTest(string processorModel, FilterNotebooksCompoent.ProcessorType type)
+        [TestCaseSource(typeof(ProcessorsData), "processors")]
+        public void FilterProcessorTest(ProcessorType[] processors)
         {
-            var notebooksPage = new FilterNotebooksCompoent(_webDriver);
-            notebooksPage.Open("https://catalog.onliner.by/notebook");
-            notebooksPage.SelectProcessor(type);
-            notebooksPage.WaitPageLoad();
-            string[] prices = notebooksPage.GetDescription();
-            foreach (var item in prices)
+            var notebooksComponent = new FilterNotebooksComponent(_webDriver);
+            var resultsComponent = new ResultsComponent(_webDriver);
+            resultsComponent.Open("https://catalog.onliner.by/notebook");
+            notebooksComponent.SelectProcessor(processors);
+            resultsComponent.WaitPageLoad();
+            string[] description = resultsComponent.GetDescription();
+            if (!description.All(descr => processors.Any(p => descr.Contains(p.ToString().Replace("_", " ")))))
             {
-                if (!item.Contains(processorModel))
-                {
-                    Assert.Fail("item with description " + item + " not contains model " + processorModel);
-                }
+                Assert.Fail("item with description " + " not contains model ");
             }
-            string message = "filter processor: " + processorModel + "success";
+            string message = "filter processor: success";
             log.Pass(message);
         }
     }
 
-    class ProcessorType
+    class ProcessorsData
     {
         static object[] processors = {
-        new object[] { "AMD A10", FilterNotebooksCompoent.ProcessorType.AMD_A10},
-        new object[] { "AMD A6", FilterNotebooksCompoent.ProcessorType.AMD_A6},
-        new object[] { "Intel Atom", FilterNotebooksCompoent.ProcessorType.Intel_Atom},
-        new object[] { "Samsung", FilterNotebooksCompoent.ProcessorType.Samsung},
-        new object[] { "Intel Core i7", FilterNotebooksCompoent.ProcessorType.Intel_Core_i7},
+        new ProcessorType[] {  AMD_A6, AMD_A10 },
+        new ProcessorType[] {  Intel_Atom, Intel_Core_i7},
+        new ProcessorType[] {  Intel_Atom, Intel_Core_i7}
     };
     }
 }
