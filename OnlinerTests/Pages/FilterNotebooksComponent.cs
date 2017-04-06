@@ -57,7 +57,6 @@ namespace OnlinerTests.Pages
             }
             foreach (var item in processorTypes)
             {
-                _driver.Click(GetLocatorForProcessorType(item));
                 if (!ProcessorIsChecked(item))
                 {
                     _driver.Click(GetLocatorForProcessorType(item));
@@ -67,8 +66,11 @@ namespace OnlinerTests.Pages
 
         private bool ProcessorIsChecked(ProcessorType type)
         {
-            var locator = GetLocatorForProcessorType(type);
-            string opacity = _driver.Driver.FindElement(locator).GetCssValue("opacity");
+            var locator = GetLocatorForProcessorType(type).ToString();
+            locator = locator.Substring(locator.IndexOf(' '), locator.Length - locator.IndexOf(' '));
+            string script = $"return window.getComputedStyle(document.querySelector('{locator}'),':before').getPropertyValue('opacity')";
+            IJavaScriptExecutor js = (IJavaScriptExecutor)_driver.Driver;
+            string opacity = (string)js.ExecuteScript(script);
             if (opacity == "1") return true;
             return false;
         }

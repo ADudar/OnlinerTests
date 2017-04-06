@@ -66,11 +66,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataOrder.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Pages\FilterRefrigeratorsComponent.cs" />
     <Compile Include="Tests\FilterPricesNotebooksTests.cs" />
+    <Compile Include="Tests\FilterEnergyClassTests.cs" />
     <Compile Include="Tests\FilterProcessorsTests.cs" />
     <Compile Include="Tests\LoginOnlinerTest.cs" />
     <Compile Include="TestsSetup.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Tests\OrderRefrigeratorsTests.cs" />
     <Compile Include="Tests\OrderTVsTests.cs" />
     <Compile Include="Tests\OrderNotebooksTests.cs" />

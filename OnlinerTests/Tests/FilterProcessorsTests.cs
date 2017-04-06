@@ -35,7 +35,7 @@ namespace OnlinerTests
         static object[] processors = {
         new ProcessorType[] {  AMD_A6, AMD_A10 },
         new ProcessorType[] {  Intel_Atom, Intel_Core_i7},
-        new ProcessorType[] {  Intel_Atom, Intel_Core_i7}
+        new ProcessorType[] {  Intel_Atom}
     };
     }
 }
