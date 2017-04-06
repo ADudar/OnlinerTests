@@ -30,7 +30,7 @@ namespace OnlinerTests
         [OneTimeTearDown]
         protected void OneTimeTearDown()
         {
-                log.Flush();
+            log.Flush();
         }
     }
 }

@@ -13,11 +13,29 @@ namespace OnlinerTests.Pages
 
         #region locators
         public By OpenLoginButtonLocator { get; set; } = By.XPath("//*[contains(@class,'auth-bar__item--text')]");
-        public By LoginInputLocator { get; set; } = By.XPath("//input[contains(@data-bind,'login.data.login')]");
-        public By PassInputtLocator { get; set; } = By.XPath("//input[contains(@data-bind,'login.data.password')]");
         public By LoginButtonLocator { get; set; } = By.XPath("//button[contains(@class,'auth-box__auth-submit')]");
-        public By AccountTitleLocator { get; set; } = By.XPath("//a[contains(@data-bind,'nickname')]"); 
+        public By AccountTitleLocator { get; set; } = By.XPath("//a[contains(@data-bind,'nickname')]");
         #endregion
+
+        public enum Credentials
+        {
+            Login,
+            Password
+        }
+
+        public By GetInputPriceLocator(Credentials credentials)
+        {
+            string filterLocator = "//input[contains(@data-bind,'login.data.{0}')]";
+            switch (credentials)
+            {
+                case Credentials.Login:
+                    return By.XPath(string.Format(filterLocator, "login"));
+                case Credentials.Password:
+                    return By.XPath(string.Format(filterLocator, "password"));
+                default:
+                    throw new System.Exception($"Unknown order state: {credentials}");
+            }
+        }
 
         public void Open()
         {
@@ -27,8 +45,8 @@ namespace OnlinerTests.Pages
         public void Login(User user)
         {
             _driver.Click(OpenLoginButtonLocator);
-            _driver.SendKeys(LoginInputLocator, user.Mailbox);
-            _driver.SendKeys(PassInputtLocator, user.Password);
+            _driver.SendKeys(GetInputPriceLocator(Credentials.Login), user.Mailbox);
+            _driver.SendKeys(GetInputPriceLocator(Credentials.Password), user.Password);
             _driver.Click(LoginButtonLocator);
         }
     }

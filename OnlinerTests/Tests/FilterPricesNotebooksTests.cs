@@ -12,7 +12,7 @@ namespace OnlinerTests
         public void FilterMinPriceTest(double price)
         {
             //log.Pass(TestContext.CurrentContext.Test.Properties["Description"].ToString());
-            var filterPage = new FilterComponent(_webDriver);
+            var filterPage = new BaseFilterComponent(_webDriver);
             var catalogPage = new ResultsComponent(_webDriver);
             catalogPage.Open("https://catalog.onliner.by/notebook");
             filterPage.SetMinPrice(price);
@@ -36,7 +36,7 @@ namespace OnlinerTests
         [TestCase(300, 400)]
         public void FilterMinMaxPriceTest(double minPrice, double maxPrice)
         {
-            var filterPage = new FilterComponent(_webDriver);
+            var filterPage = new BaseFilterComponent(_webDriver);
             var catalogPage = new ResultsComponent(_webDriver);
             catalogPage.Open("https://catalog.onliner.by/notebook");
             filterPage.SetMinMaxPrice(minPrice, maxPrice);
@@ -62,8 +62,8 @@ namespace OnlinerTests
         [TestCase(400)]
         public void FilterMaxPriceTest(double price)
         {
-            var filterPage = new FilterComponent(_webDriver);
-            var catalogPage= new ResultsComponent(_webDriver);
+            var filterPage = new BaseFilterComponent(_webDriver);
+            var catalogPage = new ResultsComponent(_webDriver);
             catalogPage.Open("https://catalog.onliner.by/notebook");
             filterPage.SetMaxPrice(price);
             string expectedStringPrice = filterPage.ConvertToStringPriceWithFormat(price);

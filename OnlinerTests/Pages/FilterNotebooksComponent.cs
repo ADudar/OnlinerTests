@@ -1,20 +1,21 @@
 ﻿using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OnlinerTests.Pages
 {
-    public class FilterNotebooksComponent : FilterComponent
+    public class FilterNotebooksComponent : BaseFilterComponent
     {
 
         public enum ProcessorType
         {
-            None = 0,
-            AMD_A10 = 1,
-            AMD_A6 = 2,
-            Intel_Atom = 4,
-            Samsung = 8,
-            Tegra_K1 = 16,
-            Intel_Core_i7 = 32,
+            AMD_A10,
+            AMD_A6,
+            Intel_Atom,
+            Samsung,
+            Tegra_K1,
+            Intel_Core_i7,
         }
 
         public FilterNotebooksComponent(WebDriver driver) : base(driver) { }
@@ -29,20 +30,18 @@ namespace OnlinerTests.Pages
             var processorLocator = ".schema-filter-popover_visible input[value={0}]+span";
             switch (type)
             {
-                //case ProcessorType.None:
-                //    return;
                 case ProcessorType.AMD_A10:
-                    return By.CssSelector(string.Format(processorLocator, ProcessorType.AMD_A10.ToString().ToLower().Replace("_", "")));
+                    return By.CssSelector(string.Format(processorLocator, "amda10"));
                 case ProcessorType.AMD_A6:
-                    return By.CssSelector(string.Format(processorLocator, ProcessorType.AMD_A6.ToString().ToLower().Replace("_", "")));
+                    return By.CssSelector(string.Format(processorLocator, "amda6"));
                 case ProcessorType.Intel_Atom:
-                    return By.CssSelector(string.Format(processorLocator, ProcessorType.Intel_Atom.ToString().ToLower().Replace("_", "")));
+                    return By.CssSelector(string.Format(processorLocator, "intelatom"));
                 case ProcessorType.Samsung:
-                    return By.CssSelector(string.Format(processorLocator, ProcessorType.Samsung.ToString().ToLower().Replace("_", "")));
+                    return By.CssSelector(string.Format(processorLocator, "samsung"));
                 case ProcessorType.Tegra_K1:
-                    return By.CssSelector(string.Format(processorLocator, ProcessorType.Tegra_K1.ToString().ToLower().Replace("_", "")));
+                    return By.CssSelector(string.Format(processorLocator, "tegrak1"));
                 case ProcessorType.Intel_Core_i7:
-                    return By.CssSelector(string.Format(processorLocator, ProcessorType.Intel_Core_i7.ToString().ToLower().Replace("_", "")));
+                    return By.CssSelector(string.Format(processorLocator, "intelcorei7"));
                 default:
                     throw new Exception($"Unknown order state: {type}");
             }
@@ -56,13 +55,23 @@ namespace OnlinerTests.Pages
                 _driver.Scroll(selectButton.Location.Y);
                 _driver.Click(ProcessorSelectLocator);
             }
-
             foreach (var item in processorTypes)
             {
                 _driver.Click(GetLocatorForProcessorType(item));
+                if (!ProcessorIsChecked(item))
+                {
+                    _driver.Click(GetLocatorForProcessorType(item));
+                }
             }
-
         }
-    }
 
+        private bool ProcessorIsChecked(ProcessorType type)
+        {
+            var locator = GetLocatorForProcessorType(type);
+            string opacity = _driver.Driver.FindElement(locator).GetCssValue("opacity");
+            if (opacity == "1") return true;
+            return false;
+        }
+
+    }
 }

@@ -38,7 +38,7 @@ namespace OnlinerTests.Pages
                 text = sr.ReadToEnd();
             }
             JObject json = JObject.Parse(text);
-            return json["products"].Select(item => 
+            return json["products"].Select(item =>
             item["extended_name"].ToString().Replace("&quot;", "\"").Replace("&#039;", "'")).ToList();
         }
 
@@ -48,18 +48,18 @@ namespace OnlinerTests.Pages
             return fullnamesList.Select(el => el.GetAttribute("innerHTML")).ToList();
         }
 
-        internal  double[] GetRatings()
+        internal double[] GetRatings()
         {
             IList<IWebElement> ratingList = _driver.FindAllElementsWithWaiting(RaitingItemsLocator);
-            return ratingList.Select(el => 
+            return ratingList.Select(el =>
             Convert.ToDouble(el.GetAttribute("class")
-            .Substring(el.GetAttribute("class").IndexOf('_') + 1, el.GetAttribute("class").Length -(el.GetAttribute("class").IndexOf('_')+1) ))).ToArray();
+            .Substring(el.GetAttribute("class").IndexOf('_') + 1, el.GetAttribute("class").Length - (el.GetAttribute("class").IndexOf('_') + 1)))).ToArray();
         }
 
-        internal  double[] GetPrices()
+        internal double[] GetPrices()
         {
             IList<IWebElement> pricesList = _driver.FindAllElementsWithWaiting(PricesItemsLocator);
-            return pricesList.Select(el => 
+            return pricesList.Select(el =>
                     Convert.ToDouble(el.GetAttribute("innerHTML")
                                        .Replace("&nbsp;", "").Replace("р.", "")
                                        .Replace(',', '.'))).ToArray();
@@ -74,7 +74,7 @@ namespace OnlinerTests.Pages
                 _driver.WaitWhileElementClassNotContainsText(LoadingProductLocator, "schema-products_processing");
                 _driver.WaitWhileElementClassNotContainsText(SchemaFilterButtonLocator, "schema-filter-button__state_animated");
             }
-            catch  {}
+            catch { }
         }
 
         internal string[] GetDescription()

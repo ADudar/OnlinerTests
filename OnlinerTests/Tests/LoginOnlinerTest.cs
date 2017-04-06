@@ -19,7 +19,7 @@ namespace OnlinerTests
             loginPage.Login(user1);
             string loginTitle = _webDriver.GetText(loginPage.AccountTitleLocator);
             Assert.AreEqual("n2440175", username.Substring(0, username.IndexOf('@')));
-            string message = "Login success with username: " + username + " and password "+ password;
+            string message = "Login success with username: " + username + " and password " + password;
             log.Pass(message);
         }
     }

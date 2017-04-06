@@ -45,7 +45,8 @@ namespace OnlinerTests
                         break;
                 }
                 capabilities.SetCapability(CapabilityType.Platform, new Platform(PlatformType.Windows));
-                Driver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), capabilities, TimeSpan.FromSeconds(600));
+                Uri uri = new Uri(ConfigurationManager.AppSettings["RemoteAddress"]);
+                Driver = new RemoteWebDriver(uri, capabilities, TimeSpan.FromSeconds(600));
             }
             else
             {
@@ -111,21 +112,21 @@ namespace OnlinerTests
         public string GetText(By locator)
         {
             string findedText = WaitElementVisible(locator).Text;
-            _logger.Info("finded text: " + findedText);
+            _logger.Info("found text: " + findedText);
             return findedText;
         }
 
         public IWebElement WaitElementVisible(By locator)
         {
             var element = _wait.Until(ExpectedConditions.ElementIsVisible(locator));
-            _logger.Info("finded element from locator: " + locator + ", tagName: " + element.TagName + ", is enabled: " + element.Enabled);
+            _logger.Info("found element from locator: " + locator + ", tagName: " + element.TagName + ", is enabled: " + element.Enabled);
             return element;
         }
 
         internal IWebElement WaitElementClickable(By locator)
         {
             var element = _wait.Until(ExpectedConditions.ElementToBeClickable(locator));
-            _logger.Info("finded element from locator: " + locator + ", tagName: " + element.TagName + ", is enabled: " + element.Enabled);
+            _logger.Info("found element from locator: " + locator + ", tagName: " + element.TagName + ", is enabled: " + element.Enabled);
             return element;
         }
 
@@ -146,14 +147,14 @@ namespace OnlinerTests
         {
             _logger.Info("wait element from locator: " + locator);
             bool result = _wait.Until(d => !d.FindElement(locator).GetAttribute("class").Contains(text));
-            _logger.Info("result of waitingn element: " + (result));
+            _logger.Info("result of waiting element: " + (result));
             return result;
         }
 
         public bool CheckContainsClass(By locator, string className)
         {
             bool result = Driver.FindElement(locator).GetAttribute("class").Contains(className);
-            _logger.Info("result of find element" + (result));
+            _logger.Info("result of found element" + (result));
             return result;
         }
 

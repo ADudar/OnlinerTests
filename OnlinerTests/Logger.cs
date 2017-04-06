@@ -23,7 +23,7 @@ namespace OnlinerTests
 
         static Logger()
         {
-            string reportPath = Path.Combine(projectPath, dirAllReportsName, dirReportName,  reportFileName) + ".html";
+            string reportPath = Path.Combine(projectPath, dirAllReportsName, dirReportName, reportFileName) + ".html";
             _extent = new ExtentReports();
             _extent.AddSystemInfo("OS", Environment.OSVersion.VersionString);
             _extent.AddSystemInfo("Author", Environment.UserName);

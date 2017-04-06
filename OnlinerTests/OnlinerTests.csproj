@@ -75,7 +75,7 @@
     <Compile Include="Tests\OrderTVsTests.cs" />
     <Compile Include="Tests\OrderNotebooksTests.cs" />
     <Compile Include="Pages\ResultsComponent.cs" />
-    <Compile Include="Pages\FilterComponent.cs" />
+    <Compile Include="Pages\BaseFilterComponent.cs" />
     <Compile Include="Pages\LoginComponent.cs" />
     <Compile Include="Pages\FilterNotebooksComponent.cs" />
     <Compile Include="Pages\OrderComponent.cs" />

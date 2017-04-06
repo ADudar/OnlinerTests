@@ -29,9 +29,7 @@ namespace OnlinerTests.Pages
         }
 
         #region locators
-        public By OrderProductLocator { get; set; } = By.CssSelector(".schema-order__link");
-        public By SchemaOrderOpenLocator { get; set; } = By.CssSelector(".schema-order_opened");
-        public By StateSpanLocator { get; set; } = By.CssSelector(".schema-filter-control__switcher-state+span");
+        public By OrderProductLocator { get; set; } = By.XPath("//a[@class='schema-order__link']/..");
         #endregion
 
         public By GetLocatorForOrderType(OrderType orderType)
@@ -102,9 +100,17 @@ namespace OnlinerTests.Pages
         {
             if (orderType != GetSelectedOrder())
             {
-                _driver.Click(OrderProductLocator);
-                        _driver.Click(GetLocatorForOrderType(orderType));
+                if (!OrderMenuIsOpened())
+                {
+                    _driver.Click(OrderProductLocator);
+                }
+                _driver.Click(GetLocatorForOrderType(orderType));
             }
+        }
+
+        private bool OrderMenuIsOpened()
+        {
+            return _driver.CheckContainsClass(OrderProductLocator, "schema-order_opened");
         }
 
         public OrderType GetSelectedOrder()
