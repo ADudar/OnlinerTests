@@ -7,45 +7,22 @@ using AventStack.ExtentReports;
 
 namespace OnlinerTests
 {
-    public class OnlinerTestsSetup
+    public class OnlinerTestsSetup : OnlinerOneTime
     {
-        protected WebDriver _webDriver;
-        protected Logger log;
-        protected ExtentReports er = new ExtentReports();
-        object myLock = new object();
-
-        [OneTimeSetUp]
-        protected void OneTimeSetup()
-        {
-            //lock (myLock)
-            //{
-
-            log = new Logger();
-            //}
-        }
-
         [SetUp]
         public void Setup()
         {
-            log.CreateTest(TestContext.CurrentContext.Test.MethodName);
+            log.CreateTest(TestContext.CurrentContext.Test.Name);
             _webDriver = new WebDriver(log);
         }
 
         [TearDown]
         public void TearDown()
         {
+            log.WriteResults(_webDriver.Driver);
             _webDriver.Quit();
         }
 
-        [OneTimeTearDown]
-        protected void OneTimeTearDown()
-        {
-            lock (myLock)
-            {
-                log.Flush();
-            }
 
-            //todo: one report when run parallel
-        }
     }
 }
